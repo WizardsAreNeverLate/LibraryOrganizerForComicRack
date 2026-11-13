@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryOrganizer.Tests", "t
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryOrganizer.LoadTests", "tests\LibraryOrganizer.LoadTests\LibraryOrganizer.LoadTests.csproj", "{A58A0692-C78F-41BA-8CAA-CAECD224A7DF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryOrganizer.Plugin.Tests", "tests\LibraryOrganizer.Plugin.Tests\LibraryOrganizer.Plugin.Tests.csproj", "{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{A58A0692-C78F-41BA-8CAA-CAECD224A7DF}.Release|x64.Build.0 = Release|Any CPU
 		{A58A0692-C78F-41BA-8CAA-CAECD224A7DF}.Release|x86.ActiveCfg = Release|Any CPU
 		{A58A0692-C78F-41BA-8CAA-CAECD224A7DF}.Release|x86.Build.0 = Release|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Debug|x64.Build.0 = Debug|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Debug|x86.Build.0 = Debug|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Release|x64.ActiveCfg = Release|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Release|x64.Build.0 = Release|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Release|x86.ActiveCfg = Release|Any CPU
+		{852C8511-3F44-4CC9-9786-9DFC4E93FAE0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

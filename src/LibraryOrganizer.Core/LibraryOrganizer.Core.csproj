@@ -8,5 +8,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="LibraryOrganizer.Tests" />
+		<InternalsVisibleTo Include="LibraryOrganizer.Plugin.Tests" />
 	</ItemGroup>
 </Project>

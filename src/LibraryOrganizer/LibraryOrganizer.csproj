@@ -18,6 +18,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="LibraryOrganizer.Tests" />
+		<InternalsVisibleTo Include="LibraryOrganizer.Plugin.Tests" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="Package\**\*" />

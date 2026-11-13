@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<IsPackable>false</IsPackable>
+		<Prefer32Bit>false</Prefer32Bit>
+		<UsesComicRack>true</UsesComicRack>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="TUnit" Version="1.81.10" />
+		<PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+		<PackageReference Include="System.Collections.Immutable" Version="10.0.1" />
+		<PackageReference Include="System.Reflection.Metadata" Version="10.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="System.Xml.Linq" />
+		<Reference Include="ComicRack.Plugins" HintPath="$(ComicRackPath)ComicRack.Plugins.dll" />
+		<Reference Include="ComicRack.Engine" HintPath="$(ComicRackPath)ComicRack.Engine.dll" />
+		<Reference Include="cYo.Common" HintPath="$(ComicRackPath)cYo.Common.dll" />
+		<Reference Include="cYo.Common.Windows" HintPath="$(ComicRackPath)cYo.Common.Windows.dll" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\LibraryOrganizer.Core\LibraryOrganizer.Core.csproj" />
+		<ProjectReference Include="..\..\src\LibraryOrganizer\LibraryOrganizer.csproj" />
+	</ItemGroup>
+</Project>

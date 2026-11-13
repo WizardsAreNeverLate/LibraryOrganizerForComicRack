@@ -24,7 +24,7 @@ if ($SkipTests) {
 
 $env:TESTINGPLATFORM_TELEMETRY_OPTOUT = "1"
 $failed = @()
-foreach ($name in "LibraryOrganizer.Tests", "LibraryOrganizer.LoadTests") {
+foreach ($name in "LibraryOrganizer.Tests", "LibraryOrganizer.Plugin.Tests", "LibraryOrganizer.LoadTests") {
 	$exe = Join-Path $PSScriptRoot "tests\$name\bin\$Configuration\net48\$name.exe"
 	if (!(Test-Path $exe)) {
 		Write-Error "The build reported success, but $exe does not exist."
