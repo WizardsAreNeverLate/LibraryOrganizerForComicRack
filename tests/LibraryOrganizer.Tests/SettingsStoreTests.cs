@@ -90,7 +90,7 @@ public class SettingsStoreTests
 		var settings = new Settings(
 			[full, plain],
 			[plain.Id, full.Id],
-			new RunPreferences(ConflictDefault.KeepBoth, ReviewWhen.OnlyWhenNeeded, 7));
+			new RunPreferences(ConflictDefault.KeepBoth));
 		var store = new SettingsStore(folder.Path);
 
 		store.Save(settings);
@@ -101,7 +101,7 @@ public class SettingsStoreTests
 		await Assert.That(load.Settings.Profiles[0]).IsEqualTo(full);
 		await Assert.That(load.Settings.Profiles[1]).IsEqualTo(plain);
 		await Assert.That(string.Join(",", load.Settings.LastRunOrder.Select(id => id.Value))).IsEqualTo(string.Join(",", new[] { plain.Id.Value, full.Id.Value }));
-		await Assert.That(load.Settings.Preferences).IsEqualTo(new RunPreferences(ConflictDefault.KeepBoth, ReviewWhen.OnlyWhenNeeded, 7));
+		await Assert.That(load.Settings.Preferences).IsEqualTo(new RunPreferences(ConflictDefault.KeepBoth));
 	}
 
 	[Test]

@@ -150,18 +150,10 @@ public static class ConflictDefaults
 	};
 }
 
-public enum ReviewWhen
-{
-	Always,
-	/// <summary>Only when the plan has questions or conflicts, or any entry failed.</summary>
-	OnlyWhenNeeded,
-}
-
 /// <summary>Plugin-wide choices, not per profile.</summary>
-/// <param name="KeepRuns">How many past run journals to keep for undo.</param>
-public sealed record RunPreferences(ConflictDefault DefaultResolution, ReviewWhen ReviewWhen, int KeepRuns)
+public sealed record RunPreferences(ConflictDefault DefaultResolution)
 {
-	public static readonly RunPreferences Default = new(ConflictDefault.Ask, ReviewWhen.Always, 20);
+	public static readonly RunPreferences Default = new(ConflictDefault.Ask);
 }
 
 /// <summary>All profiles plus the last run order. Immutable; the store swaps whole values.</summary>

@@ -66,7 +66,7 @@ public sealed class Probe : DotNetPlugin, IStartup
 		string comics = Path.Combine(root, "Comics");
 		var profile = new ProfileSettings { Name = "Smoke", BaseFolder = comics };
 		new SettingsStore(Environment.GetEnvironmentVariable("LIBRARYORGANIZER_NET_DATA")!)
-			.Save(new Settings([profile], [profile.Id], RunPreferences.Default with { ReviewWhen = ReviewWhen.OnlyWhenNeeded }));
+			.Save(new Settings([profile], [profile.Id], RunPreferences.Default));
 
 		ComicBook first = AddBook(Path.Combine(inbox, "xmen 1.cbz"), "1", 1991, 10);
 		ComicBook seventh = AddBook(Path.Combine(inbox, "xmen 7.cbz"), "7", 1992, 3);

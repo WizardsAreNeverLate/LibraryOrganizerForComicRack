@@ -179,9 +179,7 @@ internal static class SettingsXml
 				new XAttribute("schema", SettingsStore.SchemaVersion),
 				new XElement(
 					"Preferences",
-					new XAttribute("defaultResolution", settings.Preferences.DefaultResolution),
-					new XAttribute("reviewWhen", settings.Preferences.ReviewWhen),
-					new XAttribute("keepRuns", settings.Preferences.KeepRuns)),
+					new XAttribute("defaultResolution", settings.Preferences.DefaultResolution)),
 				new XElement("LastRunOrder", settings.LastRunOrder.Select(id => new XElement("Profile", new XAttribute("id", id.Value)))),
 				new XElement("Profiles", settings.Profiles.Select(WriteProfile))));
 
@@ -192,9 +190,7 @@ internal static class SettingsXml
 		RunPreferences runPreferences = preferences is null
 			? defaults
 			: new RunPreferences(
-				ReadEnum(preferences.Attribute("defaultResolution"), defaults.DefaultResolution, "Preferences", warnings),
-				ReadEnum(preferences.Attribute("reviewWhen"), defaults.ReviewWhen, "Preferences", warnings),
-				int.TryParse((string?)preferences.Attribute("keepRuns"), NumberStyles.None, CultureInfo.InvariantCulture, out int keep) ? keep : defaults.KeepRuns);
+				ReadEnum(preferences.Attribute("defaultResolution"), defaults.DefaultResolution, "Preferences", warnings));
 
 		var profiles = new List<ProfileSettings>();
 		var seen = new HashSet<ProfileId>();
