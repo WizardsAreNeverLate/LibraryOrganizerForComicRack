@@ -239,6 +239,36 @@ needs a profile that renders both folder and name. `Compile` does not read a tem
 switch off, ignores an empty-substitute key it does not know, and sets `SettingsError.Where` to the `ProfileSettings`
 property name.
 
+**U8 (executor).** `Executor.Run` and `Executor.Resume(RunId)` are synchronous. `Resume` on a finished run changes
+nothing and returns what the journal recorded. A cancelled run is finished, so it is not resumed. An exception from the
+gateway or the journal ends the run and leaves the journal interrupted. `Run` and `Resume` call `JournalStore.Trim` at
+the end.
+Which operations are already done is decided once per run, latest operation first, on a `DiskOverlay` that takes each
+done operation back. Asking each operation in turn against the real disk is wrong after a move into a vacated path or a
+Replace: the recycle would look undone and take the file that replaced it. A move also counts as done when its target is
+there and the journal has its `file` mark, although something new is at the source. That is the only place a mark
+decides, and undo turns that state into the occupied-path conflict.
+`Operation.IsSatisfied` for a move has no size check, because the operation carries no size. A copy compares sizes while
+the source can still be read. So a file that appears at a target after the source has vanished is taken for the moved
+file. `Operation.Inverse(OpId, BookId? createdBook)` takes the one created book, not the map.
+`RenameCase` renames only the file name, through `<name>.lo-rename` in the same folder. A folder whose spelling differs
+keeps it on the disk; the library path gets the planned spelling. A `WriteCover` whose book has no cover fails.
+Prune walks up from each candidate, past folders that are already gone, and fails as a whole after trying every
+candidate when the system refuses one.
+The journal file is `runs\yyyyMMdd-HHmmssfff-<runId>.journal`, UTC. Its `<run>` line carries `schema="1"` and the
+number of entry and operation lines. `<entry>` lines come before the `<op>` lines and hold the plan entries, so a
+resumed run reports like a clean one and undo has captions and profile names. A journal whose plan part is not there in
+full is not a run: `List` omits it and `Trim` deletes it. A line counts only once its line end is written. A mark that
+cannot be read is skipped. `RunSummary` has `Cancelled`. `RunJournal` has `Entries` and `Marks` (`OpMark`: file,
+applied, created book, failure) in place of results and created books.
+`ILibraryGateway.AddCopy` must return the existing book when the library already has one at the path, so a repeated call
+adds nothing. With an unknown source it adds the copy with no metadata.
+`PlanUndo` gives one entry per entry of the run that had operations. `PlannedAsFailed` means the book moves back and a
+file the run recycled stays in the Recycle Bin; `Skipped` means the disk shows nothing to undo. Its conflicts have no
+library book (`TargetExists(null)`), because it gets no library index. When the run pruned, the undo ends with a prune
+of the folders its moves leave, with the run's stop and keep lists. `RunReport.Tally` counts an entry as planned when
+all its operations succeeded, failed when one failed, and skipped when a cancel left one not run.
+
 ## Open questions and risks
 
 - Should text rule operators be case-insensitive by default? This design says yes (a breaking change). The importer flags each 2.x rule whose result could differ.

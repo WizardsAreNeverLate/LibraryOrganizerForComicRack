@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -231,7 +232,9 @@ internal sealed class Planner
 				allowed.Add(ResolutionChoice.KeepBoth);
 			}
 			allowed.Add(ResolutionChoice.UsePath);
-			AbsPath? keepBothPath = allowed.Contains(ResolutionChoice.KeepBoth) ? FreeName(target) : null;
+			AbsPath? keepBothPath = allowed.Contains(ResolutionChoice.KeepBoth)
+				? FreeName(target, candidate => claims.ContainsKey(candidate) || input.Disk.FileExists(candidate))
+				: null;
 
 			bool Usable(Resolution? resolution)
 				=> resolution is not null
@@ -314,14 +317,14 @@ internal sealed class Planner
 	};
 
 	/// <summary>"name (n).ext" in the target's folder, replacing a number the name already ends with.</summary>
-	private AbsPath FreeName(AbsPath target)
+	internal static AbsPath FreeName(AbsPath target, Func<AbsPath, bool> taken)
 	{
 		string extension = target.Extension;
 		string stem = NumberSuffix.Replace(target.Name.Substring(0, target.Name.Length - extension.Length), "");
 		for (int n = 1; ; n++)
 		{
 			AbsPath candidate = target.Parent.Combine($"{stem} ({n}){extension}");
-			if (!claims.ContainsKey(candidate) && !input.Disk.FileExists(candidate))
+			if (!taken(candidate))
 			{
 				return candidate;
 			}

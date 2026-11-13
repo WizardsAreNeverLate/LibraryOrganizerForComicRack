@@ -13,6 +13,20 @@ public static class Organizer
 	public static Plan Plan(OrganizeInput input, Decisions decisions) => new Planner(input, decisions).Run();
 
 	/// <summary>
+	/// The plan that undoes a run, of kind <see cref="PlanKind.Undo"/>. It is reviewed, approved and executed like any
+	/// plan, writes its own journal, and can itself be undone.
+	/// </summary>
+	/// <remarks>
+	/// The disk decides what there is to undo, not the journal's marks: each operation whose end state holds gets its
+	/// inverse, latest first, so a run that crashed is undone exactly as far as it got. An operation with no inverse
+	/// (a recycled file) shows as a failed entry. A move back to a path that something else now holds is a
+	/// <see cref="ConflictKind.TargetExists"/> conflict that allows Skip and Keep both. Books are found by id and paths
+	/// come from the journal, so a profile renamed or deleted since the run changes nothing. A folder the run pruned is
+	/// created again when a file moves back into it.
+	/// </remarks>
+	public static Plan PlanUndo(RunJournal journal, IFileProbe disk, Decisions decisions) => UndoPlanner.Plan(journal, disk, decisions);
+
+	/// <summary>
 	/// One profile, one book, for the configure form. Ignores other profiles, the disk and conflicts. An unanswered
 	/// multi-value token renders as a placeholder. A book the profile would skip or fail still renders its path where it
 	/// can, and <see cref="PreviewResult.Problem"/> says why it would not be organized.
