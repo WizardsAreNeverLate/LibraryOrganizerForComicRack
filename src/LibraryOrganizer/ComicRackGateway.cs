@@ -18,11 +18,15 @@ internal sealed class ComicRackGateway : ILibraryGateway
 {
 	private readonly IApplication app;
 	private readonly SynchronizationContext ui;
+	private readonly IReadOnlyList<ComicBook> outside;
 	private Dictionary<BookId, ComicBook>? books;
 
-	public ComicRackGateway(IApplication app)
+	/// <param name="selection">Books the run was given. Books from the folder view are not in the library, and only this
+	/// list lets them follow their files.</param>
+	public ComicRackGateway(IApplication app, IEnumerable<ComicBook>? selection = null)
 	{
 		this.app = app;
+		outside = [.. selection ?? []];
 		ui = SynchronizationContext.Current ?? throw new InvalidOperationException("Create the gateway on ComicRack's UI thread.");
 	}
 
@@ -99,7 +103,7 @@ internal sealed class ComicRackGateway : ILibraryGateway
 
 	private ComicBook? Find(BookId id) => Library().TryGetValue(id, out ComicBook? book) ? book : null;
 
-	private Dictionary<BookId, ComicBook> Library() => books ??= app.GetLibraryBooks().GroupBy(b => b.Id).ToDictionary(g => new BookId(g.Key), g => g.First());
+	private Dictionary<BookId, ComicBook> Library() => books ??= app.GetLibraryBooks().Concat(outside).GroupBy(b => b.Id).ToDictionary(g => new BookId(g.Key), g => g.First());
 
 	private void OnUi(Action action) => OnUi<object?>(() =>
 	{

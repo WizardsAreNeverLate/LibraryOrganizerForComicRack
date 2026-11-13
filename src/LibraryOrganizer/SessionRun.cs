@@ -50,13 +50,13 @@ internal sealed partial class Session
 
 		var decisions = new Decisions(Answers, Decisions.None.Resolutions, settings.Preferences.DefaultResolution.ToResolution());
 		Plan plan = WithWaitCursor(() => Replan(decisions));
-		bool needsReview = !quick || settings.Preferences.ReviewWhen == ReviewWhen.Always
+		bool needsReview = !quick
 			|| plan.Approve() is null
 			|| plan.Entries.Any(e => e.Outcome is EntryOutcome.Failed or EntryOutcome.PlannedAsFailed);
 		ApprovedPlan? approved = needsReview ? Review(plan, Replan, decisions) : plan.Approve();
 		if (approved is not null)
 		{
-			Execute("Library Organizer", approved);
+			Execute("Library Organizer", approved, books);
 		}
 	});
 
@@ -67,12 +67,13 @@ internal sealed partial class Session
 		{
 			if (action == HistoryAction.Finish)
 			{
-				ShowReport("Library Organizer: finished run", RunWindow.Show(Owner, "Finishing the run", (progress, cancel) => NewExecutor().Resume(run, progress, cancel)));
+				Resume(run);
 				continue;
 			}
 			RunJournal journal = Journals.Read(run);
+			Decisions decisions = Decisions.None with { Answers = Answers };
 			Plan Replan(Decisions decisions) => Organizer.PlanUndo(journal, disk, decisions);
-			if (Review(WithWaitCursor(() => Replan(Decisions.None)), Replan, Decisions.None) is ApprovedPlan undo)
+			if (Review(WithWaitCursor(() => Replan(decisions)), Replan, decisions) is ApprovedPlan undo)
 			{
 				Execute("Library Organizer: undo", undo);
 			}
@@ -87,14 +88,23 @@ internal sealed partial class Session
 		return result == DialogResult.OK ? review.Approved : null;
 	}
 
-	private void Execute(string title, ApprovedPlan plan)
+	private void Execute(string title, ApprovedPlan plan, IEnumerable<ComicBook>? books = null)
 	{
-		Executor executor = NewExecutor();
+		Executor executor = NewExecutor(books);
 		ShowReport(title, RunWindow.Show(Owner, title, (progress, cancel) => executor.Run(plan, progress, cancel)));
 	}
 
-	/// <summary>Created here, on the UI thread, so the gateway can send library writes back to it.</summary>
-	private Executor NewExecutor() => new(disk, new ComicRackGateway(env.App), Journals);
+	private void Resume(RunId run)
+	{
+		Executor executor = NewExecutor();
+		ShowReport("Library Organizer: finished run", RunWindow.Show(Owner, "Finishing the run", (progress, cancel) => executor.Resume(run, progress, cancel)));
+	}
+
+	/// <summary>
+	/// Call on the UI thread, never inside a RunWindow body: the gateway captures this thread to send library writes back to.
+	/// <paramref name="books"/> lets books outside the library, such as those from the folder view, follow their files.
+	/// </summary>
+	private Executor NewExecutor(IEnumerable<ComicBook>? books = null) => new(disk, new ComicRackGateway(env.App, books), Journals);
 
 	private void ShowReport(string title, RunReport report) => ReportForm.Show(Owner, title, report);
 
@@ -105,7 +115,7 @@ internal sealed partial class Session
 			string question = $"A Library Organizer run from {run.Started.ToLocalTime():g} did not finish ({run.Done} of {run.Operations} changes done).\n\nFinish it now? Choose No to leave it; you can finish or undo it later from Library Organizer: History.";
 			if (MessageBox.Show(Owner, question, "Library Organizer", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
 			{
-				ShowReport("Library Organizer: finished run", RunWindow.Show(Owner, "Finishing the run", (progress, cancel) => NewExecutor().Resume(run.Id, progress, cancel)));
+				Resume(run.Id);
 			}
 		}
 	}
