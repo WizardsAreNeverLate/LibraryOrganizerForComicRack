@@ -39,4 +39,12 @@ internal static class TestBooks
 			values,
 			new Dictionary<string, string>());
 	}
+
+	/// <summary>A fileless book with a custom cover.</summary>
+	public static BookRecord Fileless(string number)
+	{
+		BookRecord book = Book(number: number);
+		return new BookRecord(
+			book.Id, new BookLocation.Fileless(HasCustomCover: true), book.Caption, Fields.All.Select(field => book[field]).ToArray(), new Dictionary<string, string>());
+	}
 }
