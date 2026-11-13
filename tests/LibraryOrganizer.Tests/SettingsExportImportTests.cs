@@ -60,7 +60,7 @@ public class SettingsExportImportTests
 	}
 
 	[Test]
-	public async Task Importing_an_export_keeps_a_replacement_that_is_only_a_space()
+	public async Task Import_and_load_keep_a_replacement_that_is_only_a_space()
 	{
 		using var folder = new TempFolder();
 		var spaces = new ProfileSettings
@@ -69,12 +69,13 @@ public class SettingsExportImportTests
 			IllegalCharacters = [.. PathDefaults.IllegalCharacters.Where(pair => pair.Key != "/"), new("/", " ")],
 			EmptySubstitutes = new Dictionary<string, string> { ["imprint"] = " " },
 		};
-		SettingsStore.Export(folder.File("export.xml"), [spaces]);
+		SettingsStore.Export(folder.File("settings.xml"), [spaces]);
 
-		ProfileSettings imported = SettingsStore.ImportFile(folder.File("export.xml")).Profiles.Single();
+		ProfileSettings imported = SettingsStore.ImportFile(folder.File("settings.xml")).Profiles.Single();
+		ProfileSettings loaded = new SettingsStore(folder.Path).Load().Settings.Profiles.Single();
 
-		await Assert.That(imported.IllegalCharacters.Single(pair => pair.Key == "/").Value).IsEqualTo(" ");
-		await Assert.That(imported.EmptySubstitutes["imprint"]).IsEqualTo(" ");
+		await Assert.That(loaded).IsEqualTo(spaces);
+		await Assert.That(imported).IsEqualTo(spaces with { Id = imported.Id });
 	}
 
 	[Test]

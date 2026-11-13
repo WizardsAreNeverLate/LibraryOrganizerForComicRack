@@ -246,8 +246,8 @@ the end.
 Which operations are already done is decided once per run, latest operation first, on a `DiskOverlay` that takes each
 done operation back. Asking each operation in turn against the real disk is wrong after a move into a vacated path or a
 Replace: the recycle would look undone and take the file that replaced it. A move also counts as done when its target is
-there and the journal has its `file` mark, although something new is at the source. That is the only place a mark
-decides, and undo turns that state into the occupied-path conflict.
+there and the journal has its `file` mark, although something new is at the source. Undo turns that state into the
+occupied-path conflict. The only other place a mark decides is a fill behind a recycle (see Review fixes).
 `Operation.IsSatisfied` for a move has no size check, because the operation carries no size. A copy compares sizes while
 the source can still be read. So a file that appears at a target after the source has vanished is taken for the moved
 file. `Operation.Inverse(OpId, BookId? createdBook)` takes the one created book, not the map.
@@ -265,9 +265,39 @@ applied, created book, failure) in place of results and created books.
 adds nothing. With an unknown source it adds the copy with no metadata.
 `PlanUndo` gives one entry per entry of the run that had operations. `PlannedAsFailed` means the book moves back and a
 file the run recycled stays in the Recycle Bin; `Skipped` means the disk shows nothing to undo. Its conflicts have no
-library book (`TargetExists(null)`), because it gets no library index. When the run pruned, the undo ends with a prune
+library book (`TargetExists(null)`). When the run pruned, the undo ends with a prune
 of the folders its moves leave, with the run's stop and keep lists. `RunReport.Tally` counts an entry as planned when
 all its operations succeeded, failed when one failed, and skipped when a cancel left one not run.
+
+**Review fixes.** An independent review of Core found five defects. Each has a test that failed before its fix.
+- *Undo moved another book's file.* Run 1 moves book 1 to T. Book 1 is renamed away, and run 2 moves book 2 to T. Undo
+  of run 1 found "source gone, target there" and moved book 2's file to book 1's old path. A file at a path is not
+  proof that it is the file the run put there. The evidence considered: later journals, the library index, and a file
+  size recorded at plan time. Later journals see only plugin runs, `Trim` deletes them, and an undo of a later run
+  makes the sequence hard to read. A size needs a new journal attribute, so a schema bump. The library index sees every
+  move the library knows of, and it is one lookup. So `Organizer.PlanUndo` takes `libraryFiles`, the same index as
+  `OrganizeInput.LibraryFiles`. The plugin builds it from `GetLibraryBooks()` when the user picks a run to undo. When
+  the index says a book other than the operation's book has its file at a move's or case rename's target, the undo
+  leaves that file and the entry is `Skipped` with the path. Copies and covers keep the existing checks: a copy
+  compares sizes while its source can be read. Two gaps remain. A file at the target that no library book holds is
+  still taken for the run's file. `Resume` still takes "source gone, target there" as done, because the executor has
+  no index; there the worst case is a library path that names the wrong file, and no file moves.
+- *Replace onto an existing file was skipped.* A plan that recycles T and then writes T (a Replace onto a cover, or a
+  copy onto a file of the same size) found the old file at T. The write looked done. The overlay then took it back,
+  so the recycle looked done too. Both were reported `AlreadyDone`, and the old file stayed. An undo of such a run that
+  never got that far would recycle the old file. `DiskOverlay` now takes the run's operations and marks. An operation
+  that fills a path that an earlier recycle of the run frees is never done while that recycle has no `file` mark. The
+  executor runs in order and never overwrites, so the operation cannot have run. `Holds` lost its `fileMarked`
+  parameter, because the overlay reads the marks itself. The executor and the undo planner both use the rule. If the
+  recycle failed and the path became free some other way before the write ran, a resume reports the write as failed
+  and an undo leaves its file. That fails safe.
+- *A case rename cut short could not be undone.* A kill between the two steps of a `RenameCase` leaves the file at
+  `<name>.lo-rename`. `Resume` already finished it, because the executor moves from the temporary name when it
+  exists. Undo saw no file at either spelling and skipped it. `RenameCase.Temporary` now owns the name. Undo emits the
+  inverse rename when the temporary file exists. The inverse's temporary name differs only in case, so it is the same
+  file, and the executor's existing step moves it to the original spelling.
+- *Import dropped whitespace-only values.* `ImportFile` loaded without `LoadOptions.PreserveWhitespace`, so a
+  replacement or empty substitute of one space came back empty. `Load` and `ImportFile` now read through one method.
 
 ## Open questions and risks
 
