@@ -123,8 +123,6 @@ public sealed class ReviewForm : Form
 	/// <summary>Everything the user has decided so far, including answers: the host keeps the answers for the session.</summary>
 	public Decisions Decisions => decisions;
 
-	internal bool IsBusy => busy;
-
 	/// <summary>Plans again with <paramref name="next"/> and shows the result. Ignored while another re-plan runs.</summary>
 	internal async Task ApplyAsync(Decisions next)
 	{

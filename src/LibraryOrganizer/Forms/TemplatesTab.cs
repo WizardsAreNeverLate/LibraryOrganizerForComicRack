@@ -137,10 +137,6 @@ internal sealed class TemplatesTab : ProfileEditor
 		}
 	}
 
-	public TemplateParse FolderParse => folder.Parse;
-
-	public TemplateParse FileParse => file.Parse;
-
 	public void SetUses(bool useFolder, bool useFileName)
 	{
 		folderActive = useFolder;

@@ -169,8 +169,6 @@ public sealed record FolderSet(IReadOnlyList<AbsPath> Folders)
 /// <summary>A profile's filter. An empty root group accepts every book in both modes, as 2.x.</summary>
 public sealed record Filter(FolderSet ExcludedFolders, RuleMode Mode, Rule.Group Root)
 {
-	public static readonly Filter AcceptAll = new(FolderSet.None, RuleMode.Except, new Rule.Group(Combinator.Any, []));
-
 	/// <summary>
 	/// Excluded folder first, then the tree. Evaluation short-circuits. An empty group is "no opinion" and its parent skips it.
 	/// The reason is for the review grid: "In excluded folder D:\Comics\Unsorted", "Matches rule: Publisher is DC", "Does not match: ...".

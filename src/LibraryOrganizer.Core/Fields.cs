@@ -191,8 +191,6 @@ public static class Fields
 	/// <summary>Import only: 2.x property or display name ("ShadowSeries", "Series", "Released Date") to field.</summary>
 	public static Field? ByLegacyName(string name) => LegacyNameIndex.TryGetValue(name, out Field? field) ? field : null;
 
-	public static IReadOnlyList<Field> SeriesKeyFields { get; } = [Publisher, Series, Volume];
-
 	private static Field Book(
 		string key, string? templateName, string displayName, FieldKind kind, FieldGroup group, FieldUses uses, string hostProperty,
 		params string[] otherLegacyNames)
