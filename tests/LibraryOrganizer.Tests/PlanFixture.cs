@@ -26,7 +26,6 @@ internal static class TestProfiles
 	public static Profile Rename(string name = "Rename") => Make(name, edit: settings => settings with { UseFolder = false });
 }
 
-/// <summary>A disk, a library and a selection that agree with each other, and the plan for them.</summary>
 internal sealed class Shelf
 {
 	private readonly Dictionary<AbsPath, BookId> libraryFiles = [];

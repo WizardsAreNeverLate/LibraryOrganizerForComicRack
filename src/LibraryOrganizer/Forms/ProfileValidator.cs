@@ -7,7 +7,6 @@ namespace LibraryOrganizer.Plugin.Forms;
 /// <summary>The tabs of the profile editor, in display order.</summary>
 public enum ConfigTab { General, Templates, Rules, Options }
 
-/// <summary>One thing wrong with a profile, and where the user fixes it.</summary>
 public sealed record ProfileProblem(ProfileId Profile, string ProfileName, ConfigTab Tab, string Message);
 
 /// <summary>The checks run when the dialog closes with OK and when the user switches profile. All problems are reported together.</summary>

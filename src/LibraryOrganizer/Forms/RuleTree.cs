@@ -6,7 +6,6 @@ using System.Windows.Forms;
 
 namespace LibraryOrganizer.Plugin.Forms;
 
-/// <summary>A row in the rule tree editor: a condition or a group of rows. Reads back to <see cref="RuleSettings"/>.</summary>
 internal abstract class RuleNode : FlowLayoutPanel
 {
 	protected RuleNode()
@@ -37,7 +36,6 @@ internal abstract class RuleNode : FlowLayoutPanel
 		};
 }
 
-/// <summary>A flow panel that draws a guide line down its left edge, so nested groups read as nested.</summary>
 internal sealed class IndentPanel : FlowLayoutPanel
 {
 	public IndentPanel()

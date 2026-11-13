@@ -4,7 +4,6 @@ using System.Windows.Forms;
 
 namespace LibraryOrganizer.Plugin.Forms;
 
-/// <summary>Small control factories shared by the editor tabs, so layout code reads as structure.</summary>
 internal static class Ui
 {
 	public static readonly Color ErrorColor = Color.FromArgb(192, 32, 32);
@@ -22,7 +21,6 @@ internal static class Ui
 		return button;
 	}
 
-	/// <summary>A one-column table whose rows grow with their content.</summary>
 	public static TableLayoutPanel Column()
 	{
 		var table = new TableLayoutPanel { ColumnCount = 1, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, Dock = DockStyle.Top };
@@ -62,7 +60,6 @@ internal static class Ui
 		=> MessageBox.Show(owner, message, title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 }
 
-/// <summary>A text box with a Browse button that picks a folder.</summary>
 internal sealed class FolderBox : TableLayoutPanel
 {
 	private readonly TextBox box = new() { Dock = DockStyle.Fill, Margin = new Padding(0, 2, 6, 2) };

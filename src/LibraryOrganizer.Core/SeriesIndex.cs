@@ -72,9 +72,7 @@ internal static class FieldReader
 	public static FieldValue Read(Field field, BookRecord book, SeriesIndex index) => field.Source switch
 	{
 		FieldSource.Book => book[field],
-		// A series the index does not hold has one known issue: the book itself, the candidate 2.x started from.
 		FieldSource.Series => ((field.SeriesEnd == SeriesEnd.Last ? index.Last(book.SeriesKey) : index.First(book.SeriesKey)) ?? book)[field.DerivedFrom!],
-		// Counter values come from the render position, not the book.
 		FieldSource.Run => FieldValue.Unset.Value,
 		_ => throw new ArgumentOutOfRangeException(nameof(field)),
 	};

@@ -16,7 +16,6 @@ public readonly record struct QuestionKey(Field Field, AnswerScope Scope);
 
 /// <param name="Choices">Issue scope: the book's items. Series scope: distinct items across the series.</param>
 /// <param name="Preselected">From the largest matching preset, in preset order.</param>
-/// <param name="ExampleCaption">The book that raised the question.</param>
 /// <param name="Waiting">How many entries this answer unblocks, for the dialog title. A render reports 1; the planner sums.</param>
 public sealed record Question(QuestionKey Key, string FieldName, IReadOnlyList<string> Choices, IReadOnlyList<string> Preselected, string ExampleCaption, int Waiting);
 
@@ -27,7 +26,6 @@ public sealed record Question(QuestionKey Key, string FieldName, IReadOnlyList<s
 /// <param name="PresetAskWhenMore">With SaveAsPreset: still ask when a book has items beyond the preset.</param>
 public sealed record Answer(IReadOnlyList<string> Selected, bool AsFolders, bool EveryIssue, bool SaveAsPreset, bool PresetAskWhenMore);
 
-/// <summary>A remembered item set for a field (2.x "always use").</summary>
 public sealed record Preset(Field Field, IReadOnlyList<string> Items, bool AskWhenMore, bool AsFolders);
 
 /// <summary>Immutable answers: per issue (by BookId), per series (by SeriesKey), and presets per field.</summary>

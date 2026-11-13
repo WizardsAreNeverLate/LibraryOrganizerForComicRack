@@ -94,7 +94,6 @@ internal abstract record PathRender
 	public sealed record Fails(string Reason) : PathRender;
 }
 
-/// <summary>One profile applied to one book: the checks and the path. Shared by the planner and the preview.</summary>
 internal static class BookPath
 {
 	public static Admission Admit(Profile profile, BookRecord book, SeriesIndex series, bool fileExists)

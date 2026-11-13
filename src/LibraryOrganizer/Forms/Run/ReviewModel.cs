@@ -7,7 +7,6 @@ namespace LibraryOrganizer.Plugin.Forms.Run;
 /// <summary>What the review grid calls an entry's outcome. Failed includes books planned into the failed-books folder.</summary>
 internal enum ReviewOutcome { Planned, AlreadyInPlace, Skipped, Overridden, Failed, Waiting, Blocked }
 
-/// <summary>One grid row: a plan entry with its text already worked out.</summary>
 /// <param name="Conflict">The conflict the row's resolution cell edits: the open one, else the entry's last. Null when the entry has none.</param>
 internal sealed record ReviewRow(
 	EntryKey Key, string Book, string Profile, ReviewOutcome Outcome, string Reason, string Action, string From, string To, Conflict? Conflict)
@@ -16,7 +15,6 @@ internal sealed record ReviewRow(
 
 	public string Resolution => Conflict is null ? "" : ReviewRows.ResolutionText(Conflict);
 
-	/// <summary>Lower-cased text the filter box searches.</summary>
 	public string SearchText { get; } = string.Join("\n", Book, Profile, ReviewRows.Label(Outcome), Reason, Action, From, To).ToLowerInvariant();
 }
 
@@ -130,7 +128,6 @@ internal static class ReviewRows
 	private static string WaitingReason(EntryOutcome.WaitingForAnswer waiting)
 		=> "needs a choice for " + string.Join(", ", waiting.Questions.Select(key => key.Field.DisplayName).Distinct());
 
-	/// <summary>The action, source and target of an entry's operations. A replace reads "Replace, then move".</summary>
 	private static (string Action, string From, string To) Describe(IReadOnlyList<Operation> operations)
 	{
 		bool replaces = operations.OfType<Operation.RecycleFile>().Any();
@@ -147,7 +144,6 @@ internal static class ReviewRows
 	}
 }
 
-/// <summary>Turns the user's choices into <see cref="Decisions"/>. The form never edits a plan.</summary>
 internal static class ReviewDecisions
 {
 	public static Decisions Resolve(Decisions decisions, Conflict conflict, ResolutionChoice choice, AbsPath? typedPath = null)
@@ -177,7 +173,6 @@ internal static class ReviewDecisions
 	};
 }
 
-/// <summary>What the "use another path" editor accepts: the checks 2.x made with <c>FileInfo</c>, with the plan's length limit.</summary>
 internal static class PathCheck
 {
 	private const string Forbidden = "<>|*?\"";

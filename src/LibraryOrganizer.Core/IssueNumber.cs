@@ -26,7 +26,6 @@ public readonly record struct IssueNumber(string Text) : IComparable<IssueNumber
 		{
 			result = StringComparer.OrdinalIgnoreCase.Compare(suffix, otherSuffix);
 		}
-		// Keeps the order consistent with equality: "7" and "07" are different values, so they must not compare as 0.
 		return result != 0 ? result : string.CompareOrdinal(Text ?? "", other.Text ?? "");
 	}
 
@@ -76,7 +75,6 @@ public readonly record struct IssueNumber(string Text) : IComparable<IssueNumber
 		}
 		else if (end < text.Length && char.GetNumericValue(text[end]) is > 0 and < 1 and double vulgarFraction)
 		{
-			// "½" and "1½" are real issue numbers; they order as 0.5 and 1.5.
 			number += negative ? -(decimal)vulgarFraction : (decimal)vulgarFraction;
 			end++;
 			found = true;

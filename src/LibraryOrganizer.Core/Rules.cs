@@ -49,7 +49,6 @@ public static class Operators
 		_ => [],
 	};
 
-	/// <summary>The words the review grid and the rule editor show.</summary>
 	public static string Describe(Operator op) => op switch
 	{
 		Operator.Is => "is",
@@ -221,7 +220,6 @@ internal static class RuleEvaluator
 			}
 			if (matched == any)
 			{
-				// The first child that settles the group: a match for Any, a miss for All.
 				return outcome;
 			}
 			texts.Add(outcome.Compound ? $"({outcome.Text})" : outcome.Text);
@@ -298,7 +296,6 @@ internal static class RuleEvaluator
 		_ => false,
 	};
 
-	// Null when the pair has no order, so neither "greater" nor "less" holds.
 	private static int? Compare(Operand operand, FieldValue value) => (operand, value) switch
 	{
 		(Operand.Number number, FieldValue.Int actual) => ((decimal)actual.Value).CompareTo(number.Value),

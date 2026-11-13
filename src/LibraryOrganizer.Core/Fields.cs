@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace LibraryOrganizer;
 
-/// <summary>What a field's value is. Decides the template formats it accepts, the rule operators it offers, and how "empty" is judged.</summary>
 public enum FieldKind
 {
 	Text,
@@ -26,10 +25,8 @@ public enum FieldKind
 	Synthetic,
 }
 
-/// <summary>Where the value comes from.</summary>
 public enum FieldSource
 {
-	/// <summary>Read from the book's snapshot.</summary>
 	Book,
 	/// <summary>Computed from the book's series in the SeriesIndex (start year, last issue number...).</summary>
 	Series,
@@ -40,14 +37,11 @@ public enum FieldSource
 /// <summary>UI grouping for the insert-field tabs and the rule editor. Order of the enum is tab order.</summary>
 public enum FieldGroup { Text, Number, YesNo, Items, Calculated }
 
-/// <summary>Where a field may appear.</summary>
 [Flags]
 public enum FieldUses
 {
 	None = 0,
-	/// <summary>Inside &lt;...&gt; in a template.</summary>
 	Template = 1,
-	/// <summary>As the field of a rule condition.</summary>
 	Rule = 2,
 	/// <summary>In the required-field and empty-substitute pickers.</summary>
 	Required = 4,
@@ -115,7 +109,6 @@ public static class Fields
 	private const FieldUses Everywhere = FieldUses.Template | FieldUses.Rule | FieldUses.Required;
 	private const FieldUses TemplateAndRule = FieldUses.Template | FieldUses.Rule;
 
-	// Must stay the first static: every field below registers itself here as it is created.
 	private static readonly List<Field> Registry = [];
 
 	public static readonly Field Series = Book("series", "series", "Series", FieldKind.Text, FieldGroup.Text, Everywhere, "ShadowSeries");
@@ -198,7 +191,6 @@ public static class Fields
 	/// <summary>Import only: 2.x property or display name ("ShadowSeries", "Series", "Released Date") to field.</summary>
 	public static Field? ByLegacyName(string name) => LegacyNameIndex.TryGetValue(name, out Field? field) ? field : null;
 
-	/// <summary>The fields that identify a series.</summary>
 	public static IReadOnlyList<Field> SeriesKeyFields { get; } = [Publisher, Series, Volume];
 
 	private static Field Book(

@@ -6,7 +6,6 @@ using System.Windows.Forms;
 
 namespace LibraryOrganizer.Plugin.Forms;
 
-/// <summary>Cleaning, empty values, required fields, month names, illegal characters and empty-folder pruning.</summary>
 internal sealed class OptionsTab : ProfileEditor
 {
 	private static readonly Field[] RequiredFields = [.. Fields.All.Where(f => f.Uses.HasFlag(FieldUses.Required))];

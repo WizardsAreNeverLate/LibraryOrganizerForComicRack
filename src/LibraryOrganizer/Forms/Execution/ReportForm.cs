@@ -7,7 +7,6 @@ using System.Windows.Forms;
 
 namespace LibraryOrganizer.Plugin.Forms.Execution;
 
-/// <summary>What a run did, one row per book and profile. Failed rows are red. The log can be saved as tab-separated text.</summary>
 internal sealed class ReportForm : Form
 {
 	private readonly IReadOnlyList<ReportRow> rows;

@@ -7,10 +7,6 @@ using System.Windows.Forms;
 
 namespace LibraryOrganizer.Plugin.Forms;
 
-/// <summary>
-/// One template box with its parse errors and preview. Errors come from <see cref="Template.Parse"/> as the user types:
-/// the message goes under the box and each span is coloured in the text.
-/// </summary>
 internal sealed class TemplateEditor : TableLayoutPanel
 {
 	private const int WmSetRedraw = 0x000B;
@@ -73,7 +69,6 @@ internal sealed class TemplateEditor : TableLayoutPanel
 
 	public event EventHandler? ValueChanged;
 
-	/// <summary>The box, for focus tracking.</summary>
 	public RichTextBox Box => box;
 
 	public string Value

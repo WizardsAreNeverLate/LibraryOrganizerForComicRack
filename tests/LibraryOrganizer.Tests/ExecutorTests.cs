@@ -21,7 +21,6 @@ public sealed class ExecutorTests : IDisposable
 
 	private static string Lines(params string[] lines) => string.Join("\n", lines);
 
-	/// <summary>Two incoming books under a Move profile that prunes and a Copy profile that adds its copies to the library.</summary>
 	private (BookRecord Seven, BookRecord Eight, Plan Plan) BackupAndMove()
 	{
 		BookRecord seven = shelf.Add(Seven, "7");

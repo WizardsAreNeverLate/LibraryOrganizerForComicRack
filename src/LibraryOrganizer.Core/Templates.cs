@@ -98,7 +98,6 @@ public sealed class Template
 			end = source.Length;
 			if (target == TemplateTarget.Folder)
 			{
-				// 2.x trimmed whitespace and '\' off a folder template, so "\{<series>}\" has one level, not three.
 				while (pos < end && IsEdge(source[pos]))
 				{
 					pos++;
@@ -127,7 +126,6 @@ public sealed class Template
 			return nodes;
 		}
 
-		/// <summary>Reads literals, folder breaks and nested groups up to a '}', the end, or (before a group's token) a '&lt;'.</summary>
 		private void ParseParts(List<Node> nodes, bool stopAtToken, bool inGroup)
 		{
 			var text = new StringBuilder();
@@ -263,7 +261,6 @@ public sealed class Template
 			return null;
 		}
 
-		/// <summary>Error recovery: moves past the '&gt;' that most likely ends a broken token, without leaving its group.</summary>
 		private void SkipToTokenEnd()
 		{
 			while (pos < end && "{}".IndexOf(source[pos]) < 0)

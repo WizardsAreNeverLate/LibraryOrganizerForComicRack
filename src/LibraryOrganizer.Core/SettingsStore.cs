@@ -170,7 +170,6 @@ public sealed class SettingsStore
 	}
 }
 
-/// <summary>The settings.xml element layout, in one place so reading and writing stay mirror images.</summary>
 internal static class SettingsXml
 {
 	public static XDocument Write(Settings settings)

@@ -6,10 +6,6 @@ using System.Text.RegularExpressions;
 
 namespace LibraryOrganizer;
 
-/// <summary>
-/// Turns a token's name and args into a Field, a ValueFormat and a ValueTest. The rules for which args a field accepts
-/// live here, keyed by FieldKind.
-/// </summary>
 internal static class TokenResolver
 {
 	private const int MaxPadWidth = 50;
@@ -84,7 +80,6 @@ internal static class TokenResolver
 		Regex pattern;
 		try
 		{
-			// "(?!)" never matches, which is what 2.x did with an empty pattern.
 			string body = argument.Length == 1 ? "(?!)" : argument.Substring(1);
 			pattern = new Regex(@"\A(?:" + body + ")", RegexOptions.CultureInvariant);
 		}
@@ -103,7 +98,6 @@ internal static class TokenResolver
 			return field.Kind switch
 			{
 				FieldKind.Int or FieldKind.Issue => new ValueFormat.Padded(width),
-				// 2.x padded the month number for <month2> as well as <month#2>.
 				FieldKind.Month => new ValueFormat.MonthNumber(width),
 				_ => throw new TokenException($"'{name}' is not a number, so it cannot take a padding width."),
 			};
@@ -186,7 +180,6 @@ internal static class TokenResolver
 			: throw new TokenException($"The scope of '{name}' must be issue or series, not '{text}'.");
 	}
 
-	/// <summary>2.x accepted a display name ("Series") or a property name ("ShadowSeries"); the template name is the natural third.</summary>
 	private static Field FirstLetterSource(string text)
 	{
 		string name = text.Trim();

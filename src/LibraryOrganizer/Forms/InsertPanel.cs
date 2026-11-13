@@ -7,10 +7,6 @@ using System.Windows.Forms;
 
 namespace LibraryOrganizer.Plugin.Forms;
 
-/// <summary>
-/// The inputs for one field's token: text before and after, then whatever its kind needs (padding, separator, date format...).
-/// Rebuilds when the field changes and shows the token it will insert, or why it cannot.
-/// </summary>
 internal sealed class InsertPanel : TableLayoutPanel
 {
 	private static readonly (string Text, AnswerScopeKind Scope)[] ScopeChoices =

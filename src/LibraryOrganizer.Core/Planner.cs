@@ -135,7 +135,6 @@ internal sealed class Planner
 		return new BookPlan(book, slots);
 	}
 
-	/// <summary>False when the profile cannot produce a path for the book. Only a render that produces one, or waits for an answer, takes a counter ordinal.</summary>
 	private bool Render(Slot slot, Admission.Accept admission)
 	{
 		rendered.TryGetValue(slot.Profile.Id, out int ordinal);
@@ -182,7 +181,6 @@ internal sealed class Planner
 			Resolve(book, slot);
 		}
 		book.Progress = Progress.Done;
-		// Copies read the file where it is now, so they run before the move takes it away.
 		foreach (Slot slot in book.Slots.OrderBy(slot => slot.Profile.Action is ProfileAction.Move ? 1 : 0))
 		{
 			for (int i = 0; i < slot.Operations.Count; i++)
@@ -239,7 +237,6 @@ internal sealed class Planner
 			bool Usable(Resolution? resolution)
 				=> resolution is not null
 					&& allowed.Contains(resolution.Choice)
-					// A typed path that leads back to a path already refused would never end.
 					&& !(resolution is Resolution.UsePath typed && (typed.Path.Equals(target) || tried.Contains(typed.Path)));
 
 			var key = new ConflictKey(slot.Key, target);
@@ -276,7 +273,6 @@ internal sealed class Planner
 		}
 	}
 
-	/// <summary>The first entry to want a path keeps it, whether it is planned or still blocked there.</summary>
 	private void Claim(AbsPath target, Slot slot)
 	{
 		if (!claims.ContainsKey(target))
@@ -305,7 +301,6 @@ internal sealed class Planner
 			return (null, false);
 		}
 		BookId? existing = input.LibraryFiles.TryGetValue(target, out BookId id) ? id : null;
-		// In a cycle the file at the target belongs to a book that is still being planned, so it cannot be recycled.
 		return (new ConflictKind.TargetExists(existing), owner?.Progress != Progress.Resolving);
 	}
 

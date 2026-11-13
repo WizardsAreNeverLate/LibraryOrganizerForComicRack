@@ -37,7 +37,6 @@ public sealed record RequiredFields(IReadOnlyList<Field> Fields, RequiredFields.
 	}
 }
 
-/// <summary>Empty-folder removal after moves.</summary>
 /// <param name="Keep">Folders that stay even when empty.</param>
 public sealed record FolderPruning(IReadOnlyList<AbsPath> Keep);
 
@@ -85,7 +84,6 @@ internal static class ProfileCompiler
 			settings.IllegalCharacters,
 			settings.CollapseSpaces,
 			settings.EmptyFolderName,
-			// A key this build does not know stays in the settings and is not an error.
 			settings.EmptySubstitutes
 				.Select(pair => (Field: Fields.ByKey(pair.Key), pair.Value))
 				.Where(pair => pair.Field is not null)

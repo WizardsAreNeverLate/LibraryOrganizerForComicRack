@@ -6,7 +6,6 @@ namespace LibraryOrganizer;
 /// <summary>ComicRack's ComicBook.Id. Stable across sessions and renames; the journal keys on it.</summary>
 public readonly record struct BookId(Guid Value);
 
-/// <summary>Where the book's content lives. Fileless books have only metadata, and maybe a custom cover.</summary>
 public abstract record BookLocation
 {
 	private BookLocation() { }
@@ -43,7 +42,6 @@ public sealed class BookRecord
 	public BookId Id { get; }
 	public BookLocation Location { get; }
 
-	/// <summary>ComicRack's caption, for the review grid and log.</summary>
 	public string Caption { get; }
 
 	/// <summary>Book-sourced field value. Series and Run fields are read through FieldReader, not here.</summary>

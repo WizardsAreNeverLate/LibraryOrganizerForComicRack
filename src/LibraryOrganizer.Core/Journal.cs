@@ -147,7 +147,6 @@ public sealed class JournalStore
 
 	private IEnumerable<RunJournal> Load() => Files().Select(ReadFile).OfType<RunJournal>();
 
-	/// <summary>Newest first: a file name starts with the time the run started.</summary>
 	private List<string> Files()
 		=> Directory.Exists(folder)
 			? [.. Directory.EnumerateFiles(folder, "*" + Extension).OrderByDescending(Path.GetFileName, StringComparer.Ordinal)]
@@ -316,7 +315,6 @@ internal static class JournalFormat
 	public static RunJournal? Parse(string text)
 	{
 		string[] pieces = text.Split('\n');
-		// The last piece has no line end. It is empty after a whole line, and a write cut short otherwise.
 		List<XElement?> lines = pieces.Take(pieces.Length - 1).Select(Element).ToList();
 		try
 		{
@@ -369,7 +367,6 @@ internal static class JournalFormat
 				}
 				catch (FormatException)
 				{
-					// A mark that cannot be read is a mark that was not written: the disk decides what was done.
 				}
 			}
 

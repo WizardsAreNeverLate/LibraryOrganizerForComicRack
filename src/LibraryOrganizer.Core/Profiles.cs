@@ -7,7 +7,6 @@ namespace LibraryOrganizer;
 /// <summary>A profile's stable identity. Names are labels and can change; the journal and the last run order store ids.</summary>
 public readonly record struct ProfileId(Guid Value);
 
-/// <summary>What a profile does with a book it accepts. Simulate is gone: every run is reviewed before it executes.</summary>
 public abstract record ProfileAction
 {
 	private ProfileAction() { }

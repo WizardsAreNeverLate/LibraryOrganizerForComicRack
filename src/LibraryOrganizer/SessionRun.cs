@@ -60,7 +60,6 @@ internal sealed partial class Session
 		}
 	});
 
-	/// <summary>Past runs, with Undo and Finish.</summary>
 	public void History() => Guarded(() =>
 	{
 		while (HistoryForm.Pick(Owner, Journals.List()) is (RunId run, HistoryAction action))
@@ -120,7 +119,6 @@ internal sealed partial class Session
 		}
 	}
 
-	/// <summary>Null when a profile has errors; the user is offered the settings dialog.</summary>
 	private Dictionary<ProfileId, Profile>? Compile(Settings settings)
 	{
 		var compiled = new Dictionary<ProfileId, Profile>();

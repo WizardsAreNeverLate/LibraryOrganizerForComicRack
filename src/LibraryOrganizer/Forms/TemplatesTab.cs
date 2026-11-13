@@ -5,7 +5,6 @@ using System.Windows.Forms;
 
 namespace LibraryOrganizer.Plugin.Forms;
 
-/// <summary>The folder and file templates, a field picker, and the controls that build a token from a field.</summary>
 internal sealed class TemplatesTab : ProfileEditor
 {
 	private static readonly Dictionary<FieldGroup, string> GroupNames = new()
