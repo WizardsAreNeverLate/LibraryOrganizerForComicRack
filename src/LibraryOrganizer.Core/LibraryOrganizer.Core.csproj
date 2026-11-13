@@ -4,6 +4,7 @@
 		<RootNamespace>LibraryOrganizer</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
+		<Reference Include="Microsoft.VisualBasic" />
 		<Reference Include="System.Xml.Linq" />
 	</ItemGroup>
 	<ItemGroup>
