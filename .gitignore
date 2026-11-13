@@ -6,3 +6,4 @@ TestResults/
 *.crplugin
 .claude/
 tools/FormPreview/shots/
+tools/smoke/runs/

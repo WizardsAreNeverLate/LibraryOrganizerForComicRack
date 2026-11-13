@@ -25,7 +25,10 @@ internal sealed partial class Session
 	{
 		this.env = env;
 		this.scriptPath = scriptPath;
-		DataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LibraryOrganizer.NET");
+		// The override keeps the in-app smoke test (tools/smoke) away from the user's real settings and journals.
+		DataFolder = Environment.GetEnvironmentVariable("LIBRARYORGANIZER_NET_DATA") is { Length: > 0 } overridden
+			? overridden
+			: Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LibraryOrganizer.NET");
 		Directory.CreateDirectory(DataFolder);
 		Settings = new SettingsStore(DataFolder);
 		Journals = new JournalStore(DataFolder, keepRuns: 20);

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<!-- The in-app smoke test's probe: a .NET plugin that drives Library Organizer inside a real ComicRack. run-smoke.ps1 builds and runs it. -->
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<RootNamespace>LoSmoke</RootNamespace>
+		<UsesComicRack>true</UsesComicRack>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="ComicRack.Plugins" HintPath="$(ComicRackPath)ComicRack.Plugins.dll" Private="false" />
+		<Reference Include="ComicRack.Engine" HintPath="$(ComicRackPath)ComicRack.Engine.dll" Private="false" />
+		<Reference Include="cYo.Common" HintPath="$(ComicRackPath)cYo.Common.dll" Private="false" />
+	</ItemGroup>
+	<ItemGroup>
+		<!-- Resolved at run time to the copy ComicRack loaded from the Library Organizer package folder. -->
+		<ProjectReference Include="..\..\src\LibraryOrganizer.Core\LibraryOrganizer.Core.csproj" Private="false" />
+	</ItemGroup>
+</Project>
