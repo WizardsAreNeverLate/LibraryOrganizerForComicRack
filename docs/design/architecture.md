@@ -218,6 +218,27 @@ value; positive comparisons never do. `ProfileId`, `ProfileAction`, `CoverFormat
 `Resolution`. A newer or unreadable schema is moved aside like a corrupt file. Imported 2.x profiles keep their own
 template text; only a brand-new profile gets `PathDefaults`.
 
+**U7 (planner).** `Plan.Operations` is public and holds the operations planned so far in execution order. `OpId` values
+start at 1 and follow that order. `EntryOutcome.WaitingForAnswer` carries every question key the entry needs.
+`ProfileTally` has a `Blocked` count; `Overridden` counts as skipped and `PlannedAsFailed` as failed. `PreviewResult.Filter`
+is never null. `FolderPruning` and `PruneFolders` have no `DeleteJunkFiles`, because no setting feeds it. `Operation` has
+no `IsSatisfied` or `Inverse` yet; they come with the executor.
+Planning order: a book is planned as a unit, and a book whose target is held by another selected book's file plans that
+book first. So `SameTargetAs.Earlier` means earlier in planning order, which is selection order except for such a chain.
+A blocked entry keeps its claim on its target. A book's copies are emitted before its move. A cycle is a `TargetExists`
+conflict that does not allow Replace, because the file belongs to a book still being planned. An explicit resolution the
+conflict does not allow falls through to the default. A typed path that leads back to a path already refused is ignored.
+A copy whose target is its own source is `AlreadyInPlace`. A book selected twice is planned once.
+The planner asks `IFileProbe` whether a book's file exists; `BookLocation.File.Exists` is read only by `Preview`, which
+has no disk. A counter ordinal is taken by a render that produces a path or waits for an answer, so numbers do not move
+when an answer or a resolution arrives; a failed render, a filtered book and an overridden profile take none.
+`RecycleFile.TransferReadProgressTo` is set only for a Move profile. `PruneFolders` is added only when a pruning profile
+moves a file; its candidates are the source folders of those moves, and the executor decides which are empty.
+Under `MoveUnder`, a profile that keeps the current folder puts the file directly in the failed folder. A fileless book
+needs a profile that renders both folder and name. `Compile` does not read a template or base folder the Use flags
+switch off, ignores an empty-substitute key it does not know, and sets `SettingsError.Where` to the `ProfileSettings`
+property name.
+
 ## Open questions and risks
 
 - Should text rule operators be case-insensitive by default? This design says yes (a breaking change). The importer flags each 2.x rule whose result could differ.

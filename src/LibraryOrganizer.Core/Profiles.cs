@@ -97,6 +97,12 @@ public sealed record ProfileSettings
 	public IReadOnlyDictionary<string, string> LastPostfix { get; init; } = NoEntries;
 	public IReadOnlyDictionary<string, string> LastSeparator { get; init; } = NoEntries;
 
+	/// <summary>
+	/// The one mapping from settings to engine types: parses the templates the profile uses, every rule and every path.
+	/// A template or base folder the Use flags switch off is not read.
+	/// </summary>
+	public CompileResult Compile() => ProfileCompiler.Compile(this);
+
 	public bool Equals(ProfileSettings? other)
 		=> other is not null
 			&& Id == other.Id
@@ -132,6 +138,18 @@ public sealed record ProfileSettings
 
 /// <summary>What "Organize" does when a target already exists, applied until the user changes it in the review grid.</summary>
 public enum ConflictDefault { Ask, Skip, Replace, KeepBoth }
+
+public static class ConflictDefaults
+{
+	/// <summary>The resolution a plan applies to every conflict that allows it. Ask leaves conflicts open.</summary>
+	public static Resolution? ToResolution(this ConflictDefault choice) => choice switch
+	{
+		ConflictDefault.Skip => new Resolution.Skip(),
+		ConflictDefault.Replace => new Resolution.Replace(),
+		ConflictDefault.KeepBoth => new Resolution.KeepBoth(),
+		_ => null,
+	};
+}
 
 public enum ReviewWhen
 {
