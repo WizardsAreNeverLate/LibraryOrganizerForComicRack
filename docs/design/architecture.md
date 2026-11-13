@@ -198,7 +198,25 @@ and `Execute` accepting an unapproved plan, fable's `required` properties on `Bo
 
 ## Implementation reconciliation
 
-Empty until implementation starts.
+Accepted deviations, with the unit that made them. Each was reviewed by the orchestrator before merge.
+
+**U2 (fields, values, series).** `Field.CanBeRequired` became `Uses.HasFlag(FieldUses.Required)`. `TemplateName` is null for
+rules-only fields. `AbsPath.IsRoot` added; `TryParse` upper-cases the drive letter and resolves `.`/`..`. An issue with no
+leading number never becomes `Last` unless the series has no numbered issue. Dates render raw as invariant `yyyy-MM-dd`.
+`FieldReader` falls back to the book itself when the index has no entry for its series.
+
+**U3 (templates).** `Piece` has a third case, `Placeholder`, so preview markers survive cleaning. A multi-value AsFolders
+answer puts a folder break between items instead of the separator; in a file name it joins with the separator. A preset
+with AskWhenMore is used silently when the book has no extra items. Series-scope questions ignore presets (as 2.x).
+Cleaning is one left-to-right pass, longest key first, then strips any remaining Windows-forbidden character. Reserved
+names get `_` before the first dot. `<month2>` is a padded month number. Padding on a Decimal field and widths over 50
+are parse errors.
+
+**U4/U6 (rules, settings, import).** Negated operators (`IsNot`, `DoesNotContain`, `DoesNotContainItem`) match an unset
+value; positive comparisons never do. `ProfileId`, `ProfileAction`, `CoverFormat`, `ReviewWhen` live in `Profiles.cs`.
+`RunPreferences.DefaultResolution` is a `ConflictDefault` enum (Ask, Skip, Replace, KeepBoth) that the planner maps to
+`Resolution`. A newer or unreadable schema is moved aside like a corrupt file. Imported 2.x profiles keep their own
+template text; only a brand-new profile gets `PathDefaults`.
 
 ## Open questions and risks
 
