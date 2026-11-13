@@ -118,6 +118,15 @@ These changes are deliberate. Most fix defects listed in the 2.x documentation.
   fresh for each run.
 - Settings use a new file format. 2.x and 1.7 settings are imported, not shared.
 
+## Not done yet
+
+These are not built yet:
+
+- The dialogs do not follow ComicRack's theme, so they stay light in dark mode.
+- There is no command that organizes the whole library when ComicRack starts.
+- Multi-value answers, including "remember this choice", are not saved. They last until ComicRack closes.
+- Export writes the new settings format only, not `.lop` files.
+
 ## Build from source
 
 You need the .NET SDK 10 or later and a ComicRack CE build that has the `DotNetPlugin` API.

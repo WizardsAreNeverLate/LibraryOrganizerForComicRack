@@ -1,0 +1,16 @@
+ASSERT PASS ComicRack registered the three commands: library-organizer-net:Books, library-organizer-net-history:Library, library-organizer-net-quick:Books
+ASSERT PASS organize showed the review and moved both files to the 2.x default-template paths: reviews shown: 1; <runs>\20261114-003059\Comics\Marvel\X-Men (1991)\X-Men Vol.2 #01 (of 12) (October, 1991).cbz | <runs>\20261114-003059\Comics\Marvel\X-Men (1991)\X-Men Vol.2 #07 (of 12) (March, 1992).cbz
+ASSERT PASS organize emptied the sources: <runs>\20261114-003059\In
+ASSERT PASS the library books follow their files: <runs>\20261114-003059\Comics\Marvel\X-Men (1991)\X-Men Vol.2 #01 (of 12) (October, 1991).cbz | <runs>\20261114-003059\Comics\Marvel\X-Men (1991)\X-Men Vol.2 #07 (of 12) (March, 1992).cbz
+ASSERT PASS the run wrote one journal: <runs>\20261114-003059\data\runs
+ASSERT PASS undo moved both files back: <runs>\20261114-003059\In
+ASSERT PASS undo restored the library paths: <runs>\20261114-003059\In\xmen 1.cbz | <runs>\20261114-003059\In\xmen 7.cbz
+ASSERT PASS undo removed the folders the run created: <runs>\20261114-003059\Comics\Marvel
+ASSERT PASS history was shown twice (undo, then close): 2
+ASSERT PASS quick moved both files again without a review: reviews shown: 0
+ASSERT PASS organize, undo and quick each wrote a journal: <runs>\20261114-003059\data\runs
+dialogs seen: review: Run | report: 2 done. | history #1 | review: Run | report: 2 done. | history #2 | report: 2 done.
+ASSERT PASS ComicRack closed itself: the probe calls MainForm.MenuClose; pid 60940 was killed only if this fails
+ASSERT PASS probe ran without an exception: no EXCEPTION line in the report
+ASSERT PASS probe made its assertions: the report has the undo assertion
+ASSERT PASS user data unchanged: 1 entries before, 1 after, in %APPDATA%\LibraryOrganizer.NET

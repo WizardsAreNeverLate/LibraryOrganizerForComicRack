@@ -127,7 +127,7 @@ Counters are threaded through the fold, keyed by profile and token position, and
 - **Questions and conflicts are plan data.** The engine never calls UI, so the preview cannot open a dialog while the user types, and quick runs, startup runs, and tests use the same code with a different answer source.
 - **Undo is a plan.** `PlanUndo` reads the journal, checks the disk for each operation's end state (not the journal's status flags), and emits the inverses in reverse order. It goes through the same conflict review and executor, writes its own journal, and can itself be undone. It looks books up by `BookId`, never by profile name.
 - **Every operation is idempotent.** The executor checks `IsSatisfied` before acting, so "finish an interrupted run" is the same `RunAsync` call on the same approved plan, per make-operations-idempotent.
-- **Answers persist.** Series and issue answers and "always use" presets live in `answers.xml`, keyed by `SeriesKey` and `BookId`. Re-organizing a series does not ask again. Configure lists remembered choices so the user can forget one.
+- **Answers persist.** (Superseded by synthesis item 10: answers last for the ComicRack session.) Series and issue answers and "always use" presets live in `answers.xml`, keyed by `SeriesKey` and `BookId`. Re-organizing a series does not ask again. Configure lists remembered choices so the user can forget one.
 - **Settings live in `%APPDATA%\LibraryOrganizer.NET\`** (`settings.xml` with a schema version, `answers.xml`, `runs\`), not in the plugin folder, so a reinstall or a read-only Program Files folder cannot lose them. The 2.x `losettingsx.dat` and `.lop` files (roots `Profiles`, `Profile`, `Settings`, `Setting`) go through `LegacyImport`, which runs ordered migrations and returns warnings for each changed behavior.
 
 ### Interface depth
@@ -186,7 +186,7 @@ and `Execute` accepting an unapproved plan, fable's `required` properties on `Bo
 - We accept that `RecycleFile` (Replace) cannot be undone, because the Recycle Bin has no reliable restore API. Undo reports it as "not reversible" instead of guessing.
 - We accept snapshotting the selection on the UI thread before planning starts, a short pause on a large selection, in exchange for an engine that never touches a live `ComicBook`.
 - We accept two profile types (`ProfileSettings` text, `Profile` compiled) in exchange for an engine that never sees an invalid template or rule.
-- We accept persisted answers (a new file and a "remembered choices" page) in exchange for not asking the same series question every run.
+- (Superseded by synthesis item 10.) We accept persisted answers (a new file and a "remembered choices" page) in exchange for not asking the same series question every run.
 - We accept that a 2.x template the new parser rejects (two tokens in one group, padding on a text field, a group with no field) becomes an import warning with a position, where 2.x left the text in the output.
 
 ## Alternatives considered

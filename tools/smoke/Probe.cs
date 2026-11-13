@@ -14,8 +14,8 @@ namespace LoSmoke;
 
 /// <summary>
 /// Runs inside a real ComicRack started with an alternate configuration. Adds two books to that library, runs
-/// Library Organizer (Quick) on them through ComicRack's own command path, then undoes the run from History, clicking
-/// the plugin's dialogs as a user would. Writes ASSERT lines to report.txt and closes ComicRack.
+/// Library Organizer on them through ComicRack's own command path and approves its review, undoes the run from History, then
+/// runs Library Organizer (Quick), clicking the plugin's dialogs as a user would. Writes ASSERT lines to report.txt and closes ComicRack.
 /// </summary>
 public sealed class Probe : DotNetPlugin, IStartup
 {
@@ -24,6 +24,7 @@ public sealed class Probe : DotNetPlugin, IStartup
 	private readonly HashSet<Form> handled = [];
 	private Form main = null!;
 	private int historyOpened;
+	private int reviews;
 
 	public override string Key { get; set; } = "lo-smoke";
 
@@ -73,11 +74,11 @@ public sealed class Probe : DotNetPlugin, IStartup
 		string firstTarget = Path.Combine(comics, @"Marvel\X-Men (1991)\X-Men Vol.2 #01 (of 12) (October, 1991).cbz");
 		string seventhTarget = Path.Combine(comics, @"Marvel\X-Men (1991)\X-Men Vol.2 #07 (of 12) (March, 1992).cbz");
 
-		Command quick = engine.GetAllCommands().Single(c => c.Key == "library-organizer-net-quick" && c.IsHook("Books"));
-		run.Invoke(null, [main, quick, (Func<IEnumerable<ComicBook>>)(() => new[] { first, seventh })]);
+		Command organize = engine.GetAllCommands().Single(c => c.Key == "library-organizer-net" && c.IsHook("Books"));
+		run.Invoke(null, [main, organize, (Func<IEnumerable<ComicBook>>)(() => new[] { first, seventh })]);
 
-		Check("quick run moved both files to the 2.x default-template paths", File.Exists(firstTarget) && File.Exists(seventhTarget), $"{firstTarget} | {seventhTarget}");
-		Check("quick run emptied the sources", !File.Exists(Path.Combine(inbox, "xmen 1.cbz")) && !File.Exists(Path.Combine(inbox, "xmen 7.cbz")), inbox);
+		Check("organize showed the review and moved both files to the 2.x default-template paths", reviews == 1 && File.Exists(firstTarget) && File.Exists(seventhTarget), $"reviews shown: {reviews}; {firstTarget} | {seventhTarget}");
+		Check("organize emptied the sources", !File.Exists(Path.Combine(inbox, "xmen 1.cbz")) && !File.Exists(Path.Combine(inbox, "xmen 7.cbz")), inbox);
 		Check("the library books follow their files", first.FilePath == firstTarget && seventh.FilePath == seventhTarget, $"{first.FilePath} | {seventh.FilePath}");
 		string runs = Path.Combine(Environment.GetEnvironmentVariable("LIBRARYORGANIZER_NET_DATA")!, "runs");
 		Check("the run wrote one journal", Directory.Exists(runs) && Directory.GetFiles(runs, "*.journal").Length == 1, runs);
@@ -89,6 +90,13 @@ public sealed class Probe : DotNetPlugin, IStartup
 		Check("undo restored the library paths", first.FilePath == Path.Combine(inbox, "xmen 1.cbz") && seventh.FilePath == Path.Combine(inbox, "xmen 7.cbz"), $"{first.FilePath} | {seventh.FilePath}");
 		Check("undo removed the folders the run created", !Directory.Exists(Path.Combine(comics, "Marvel")), Path.Combine(comics, "Marvel"));
 		Check("history was shown twice (undo, then close)", historyOpened == 2, historyOpened.ToString());
+
+		Command quick = engine.GetAllCommands().Single(c => c.Key == "library-organizer-net-quick" && c.IsHook("Books"));
+		int reviewsBefore = reviews;
+		run.Invoke(null, [main, quick, (Func<IEnumerable<ComicBook>>)(() => new[] { first, seventh })]);
+
+		Check("quick moved both files again without a review", File.Exists(firstTarget) && File.Exists(seventhTarget) && reviews == reviewsBefore, $"reviews shown: {reviews - reviewsBefore}");
+		Check("organize, undo and quick each wrote a journal", Directory.GetFiles(runs, "*.journal").Length == 3, runs);
 	}
 
 	private ComicBook AddBook(string path, string number, int year, int month)
@@ -129,6 +137,7 @@ public sealed class Probe : DotNetPlugin, IStartup
 					{
 						handled.Add(form);
 						seen.Add("review: Run");
+						reviews++;
 						Click(form, "Run");
 					}
 					break;
