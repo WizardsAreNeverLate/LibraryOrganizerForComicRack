@@ -71,6 +71,9 @@ run left empty. A file that a run replaced went to the Recycle Bin, and undo doe
 If ComicRack closed in the middle of a run, the next Library Organizer run offers to finish it. **Finish** in the history window does
 the same.
 
+Use **History and Undo** to undo a run, not ComicRack's **Edit** > **Undo**. ComicRack records each changed file path, so its
+undo points the books back at their old paths while the files stay where the run moved them.
+
 ## Write templates
 
 The template syntax is the 2.x syntax. A template is plain text plus groups in braces. A group holds one field in angle
