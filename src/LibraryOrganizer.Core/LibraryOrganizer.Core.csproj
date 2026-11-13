@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<RootNamespace>LibraryOrganizer</RootNamespace>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System.Xml.Linq" />
+	</ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="LibraryOrganizer.Tests" />
+	</ItemGroup>
+</Project>

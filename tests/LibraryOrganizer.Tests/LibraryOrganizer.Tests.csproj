@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<IsPackable>false</IsPackable>
+		<Prefer32Bit>false</Prefer32Bit>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="TUnit" Version="1.81.10" />
+		<PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="System.Xml.Linq" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\LibraryOrganizer.Core\LibraryOrganizer.Core.csproj" />
+	</ItemGroup>
+</Project>

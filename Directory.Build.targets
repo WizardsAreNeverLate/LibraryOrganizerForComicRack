@@ -1,0 +1,6 @@
+<Project>
+	<Target Name="CheckComicRackDir" BeforeTargets="ResolveAssemblyReferences" Condition="'$(UsesComicRack)' == 'true'">
+		<Error Condition="'$(ComicRackDir)' == ''" Text="ComicRackDir is not set. Set COMICRACK_DIR, or pass -p:ComicRackDir=&lt;folder&gt;, to the output folder of a ComicRack CE build that has the DotNetPlugin API (WizardsAreNeverLate/ComicRackCE branch integration)." />
+		<Error Condition="'$(ComicRackDir)' != '' and !Exists('$(ComicRackPath)ComicRack.Plugins.dll')" Text="ComicRackDir is '$(ComicRackDir)', but that folder has no ComicRack.Plugins.dll." />
+	</Target>
+</Project>
