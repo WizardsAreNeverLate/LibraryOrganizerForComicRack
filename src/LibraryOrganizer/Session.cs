@@ -41,7 +41,9 @@ internal sealed partial class Session
 	private IWin32Window Owner => env.MainWindow;
 
 	/// <summary>The settings dialog. Previews render on the first of <paramref name="books"/>, or on a library book.</summary>
-	public void Configure(IReadOnlyList<ComicBook>? books) => Guarded(() =>
+	public void Configure(IReadOnlyList<ComicBook>? books) => Guarded(() => ConfigureCore(books));
+
+	private void ConfigureCore(IReadOnlyList<ComicBook>? books)
 	{
 		Settings settings = LoadSettings();
 		IReadOnlyList<ComicBook> library = [.. env.App.GetLibraryBooks()];
@@ -52,7 +54,7 @@ internal sealed partial class Session
 		{
 			Settings.Save(edited);
 		}
-	});
+	}
 
 	private string PreviewText(ProfileSettings settings, LibrarySnapshot? snapshot)
 	{

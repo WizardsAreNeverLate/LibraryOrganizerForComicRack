@@ -24,9 +24,9 @@ public class PluginLoadTests
 			var engine = new PluginEngine();
 			engine.Initialize(new StubEnvironment(), scripts);
 
-			string[] hooks = [.. engine.GetAllCommands().Where(c => c.Key == "library-organizer-net").Select(c => c.Hook).OrderBy(h => h)];
+			string[] commands = [.. engine.GetAllCommands().Where(c => c.Key.StartsWith("library-organizer-net")).Select(c => $"{c.Key}:{c.Hook}:{(c.Configure is null ? "" : "configure")}").OrderBy(s => s)];
 
-			await Assert.That(string.Join(",", hooks)).IsEqualTo(string.Join(",", ExpectedHooks.OrderBy(h => h)));
+			await Assert.That(commands).IsEquivalentTo(ExpectedCommands);
 		}
 		finally
 		{
@@ -34,7 +34,12 @@ public class PluginLoadTests
 		}
 	}
 
-	private static readonly string[] ExpectedHooks = ["Books"];
+	private static readonly string[] ExpectedCommands =
+	[
+		"library-organizer-net:Books:configure",
+		"library-organizer-net-history:Library:configure",
+		"library-organizer-net-quick:Books:configure",
+	];
 
 	private static string CrPlugin()
 	{
