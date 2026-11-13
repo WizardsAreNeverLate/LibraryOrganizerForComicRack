@@ -7,7 +7,6 @@ namespace LibraryOrganizer.Plugin.Forms.Execution;
 
 internal enum HistoryAction { Undo, Finish }
 
-/// <summary>Past runs, newest first. Undo plans the way back from what is on disk now; Finish resumes an interrupted run.</summary>
 internal sealed class HistoryForm : Form
 {
 	private readonly IReadOnlyList<RunSummary> runs;

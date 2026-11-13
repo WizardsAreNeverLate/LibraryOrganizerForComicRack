@@ -25,7 +25,6 @@ internal sealed partial class Session
 	{
 		this.env = env;
 		this.scriptPath = scriptPath;
-		// The override keeps the in-app smoke test (tools/smoke) away from the user's real settings and journals.
 		DataFolder = Environment.GetEnvironmentVariable("LIBRARYORGANIZER_NET_DATA") is { Length: > 0 } overridden
 			? overridden
 			: Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LibraryOrganizer.NET");
@@ -78,9 +77,6 @@ internal sealed partial class Session
 	private static IReadOnlyList<string> CustomKeys(IEnumerable<ComicBook> library)
 		=> [.. library.SelectMany(b => b.GetCustomValues()).Select(pair => pair.Key).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(k => k, StringComparer.OrdinalIgnoreCase)];
 
-	/// <summary>
-	/// Loads settings. The first time, when no settings file exists yet and a 2.x install is found, offers to import it.
-	/// </summary>
 	private Settings LoadSettings()
 	{
 		bool firstRun = !File.Exists(Settings.Path);
@@ -104,7 +100,6 @@ internal sealed partial class Session
 		return settings;
 	}
 
-	/// <summary>The Python plugin lives in a sibling folder of this plugin's folder under ComicRack's Scripts folder.</summary>
 	private string? Legacy2xFile()
 		=> Directory.GetParent(scriptPath) is DirectoryInfo scripts ? LegacyImport.FindInstalled2x(scripts.FullName) : null;
 
@@ -116,7 +111,6 @@ internal sealed partial class Session
 		}
 	}
 
-	/// <summary>Errors are shown, never passed to ComicRack. A second command while one is open does nothing.</summary>
 	private void Guarded(Action action)
 	{
 		if (busy)

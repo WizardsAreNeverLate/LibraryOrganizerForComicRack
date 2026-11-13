@@ -36,7 +36,6 @@ public sealed class Plan
 	/// <summary>The operations planned so far, in execution order. Entries that wait or are blocked contribute none.</summary>
 	public IReadOnlyList<Operation> Operations { get; }
 
-	/// <summary>The answers this plan used.</summary>
 	public AnswerBook Answers { get; }
 
 	/// <summary>What stops <see cref="Approve"/>, one line per open question and conflict.</summary>

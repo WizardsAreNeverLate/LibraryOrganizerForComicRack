@@ -23,7 +23,6 @@ internal sealed class FakeDisk : IFileProbe
 	public IReadOnlyList<AbsPath> Children(AbsPath folder) => [];
 }
 
-/// <summary>A disk and a selection that agree with each other, planned through the real planner.</summary>
 internal sealed class RunShelf
 {
 	public FakeDisk Disk { get; } = new();

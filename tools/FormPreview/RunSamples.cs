@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace LibraryOrganizer.FormPreview;
 
-/// <summary>In-memory books, disk and profiles that make the real planner produce every kind of review row.</summary>
 internal sealed class RunSamples
 {
 	private readonly Dictionary<AbsPath, BookId> libraryFiles = [];
@@ -115,7 +114,6 @@ internal sealed class RunSamples
 	}
 }
 
-/// <summary>A read-only probe over a set of file paths.</summary>
 internal sealed class SampleDisk : IFileProbe
 {
 	private readonly HashSet<AbsPath> files = [];

@@ -23,7 +23,6 @@
 		<Reference Include="cYo.Common.Windows" HintPath="$(ComicRackPath)cYo.Common.Windows.dll" />
 	</ItemGroup>
 	<ItemGroup>
-		<!-- Build order only: the test reads the packed .crplugin, never this assembly. -->
 		<ProjectReference Include="..\..\src\LibraryOrganizer\LibraryOrganizer.csproj" ReferenceOutputAssembly="false" Private="false" />
 	</ItemGroup>
 </Project>

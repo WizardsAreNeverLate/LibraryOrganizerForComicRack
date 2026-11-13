@@ -106,7 +106,6 @@ public sealed class Probe : DotNetPlugin, IStartup
 		return book;
 	}
 
-	/// <summary>Plays the user: one action per dialog, recorded in order.</summary>
 	private void Drive()
 	{
 		CloseMessageBoxes();

@@ -40,14 +40,12 @@ public abstract record FieldValue
 		Int number => number.Value.ToString(CultureInfo.InvariantCulture),
 		Decimal number => number.Value.ToString("0.##########", CultureInfo.InvariantCulture),
 		Issue issue => issue.Value.ToString(),
-		// ComicRack's enum member names, which is what 2.x wrote and what 2.x rules compare against.
 		YesNo yesNo => yesNo.Value switch
 		{
 			YesNoValue.Yes => "Yes",
 			YesNoValue.YesRightToLeft => "YesAndRightToLeft",
 			_ => "No",
 		},
-		// 2.x used the current culture, whose '/' and ':' are not legal in a path.
 		Date date => date.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
 		Items items => items.RawText,
 		_ => "",

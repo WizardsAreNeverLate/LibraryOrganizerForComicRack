@@ -137,7 +137,6 @@ public sealed class ProfilePicker : Form
 	}
 }
 
-/// <summary>The order logic behind <see cref="ProfilePicker"/>, apart from the controls.</summary>
 internal static class ProfileOrder
 {
 	/// <summary>

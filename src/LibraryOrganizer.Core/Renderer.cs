@@ -17,7 +17,6 @@ internal abstract record Piece
 	public sealed record Placeholder(string Name) : Piece;
 }
 
-/// <summary>Result of rendering one template for one book.</summary>
 internal abstract record RenderOutcome
 {
 	private RenderOutcome() { }
@@ -35,7 +34,6 @@ internal sealed record RenderContext(PathStyle Style, SeriesIndex Series, Answer
 
 internal static class Renderer
 {
-	// The 2.x list (English, Dutch, German, French, Spanish, Portuguese, Italian).
 	private static readonly HashSet<string> Articles = new(
 		("the a an de het een die der das des dem ein eines einer einen la le l' les un une el las los "
 			+ "una unos unas o os um uma uns umas en et il lo uno gli").Split(' '),
@@ -51,7 +49,6 @@ internal static class Renderer
 		return run.Questions.Count > 0 ? new RenderOutcome.NeedsAnswers(run.Questions) : new RenderOutcome.Done(pieces);
 	}
 
-	/// <summary>A token's formatted, uncleaned value. Null text means a multi-value token is waiting for an answer.</summary>
 	private readonly record struct Value(string? Text, IReadOnlyList<string>? Folders = null);
 
 	private sealed class Run(TemplateTarget target, BookRecord book, RenderContext context)
@@ -77,14 +74,12 @@ internal static class Renderer
 			}
 		}
 
-		// Children render only when the group shows, so a hidden child never asks a question.
 		private void Write(Node.Group group, List<Piece> pieces)
 		{
 			Token token = group.Token;
 			Value value = Format(token);
 			if (value.Text is null)
 			{
-				// The answer decides whether the group shows. Assume it will, so one round of questions covers the children too.
 				Write(group.Before, pieces);
 				if (token.Test is null)
 				{
@@ -179,7 +174,6 @@ internal static class Renderer
 			Value Chosen(IEnumerable<string> items, bool asFolders)
 			{
 				List<string> chosen = items.ToList();
-				// A file name has no levels: there the separator still joins the items.
 				return new Value(string.Join(format.Separator, chosen), asFolders && target == TemplateTarget.Folder ? chosen : null);
 			}
 
@@ -190,7 +184,6 @@ internal static class Renderer
 				{
 					return Chosen(answer.EveryIssue ? answer.Selected : answer.Selected.Where(Has), answer.AsFolders);
 				}
-				// The index may not hold this book (a preview, or a book outside the library), so its own items count too.
 				List<string> choices = context.Series.DistinctItems(book.SeriesKey, field)
 					.Concat(bookItems)
 					.Distinct(StringComparer.OrdinalIgnoreCase)
@@ -234,10 +227,6 @@ internal static class Renderer
 		}
 	}
 
-	/// <summary>
-	/// Upper-cased first character after a leading article. Unlike 2.x, a one-character value works and an elided article
-	/// (L'Homme, D'Artagnan) is skipped without a following space.
-	/// </summary>
 	private static string FirstLetter(string value)
 	{
 		string text = value.TrimStart();

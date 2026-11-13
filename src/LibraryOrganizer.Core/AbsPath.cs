@@ -32,7 +32,6 @@ public readonly record struct AbsPath
 		string[] rest;
 		if (text.Length >= 3 && IsDriveLetter(text[0]) && text[1] == ':' && text[2] == '\\')
 		{
-			// Upper-cased so "d:\x" and "D:\x" are not a case-only rename.
 			root = char.ToUpperInvariant(text[0]) + ":";
 			rest = text.Substring(3).Split('\\');
 		}
@@ -119,7 +118,6 @@ public readonly record struct AbsPath
 		return Value.StartsWith(prefix, StringComparison.OrdinalIgnoreCase);
 	}
 
-	/// <summary>Same path ignoring case, different spelling: the RenameCase case.</summary>
 	public bool DiffersOnlyByCase(AbsPath other) => Equals(other) && !string.Equals(Value, other.Value, StringComparison.Ordinal);
 
 	public bool Equals(AbsPath other) => StringComparer.OrdinalIgnoreCase.Equals(Value, other.Value);

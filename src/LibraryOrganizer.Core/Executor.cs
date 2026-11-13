@@ -26,7 +26,6 @@ public abstract record OpResult
 	public sealed record NotRun(OpId Op) : OpResult;
 }
 
-/// <summary>The plan's entries with the result of each operation.</summary>
 public sealed record RunReport(RunId Run, IReadOnlyList<PlanEntry> Entries, IReadOnlyDictionary<OpId, OpResult> Results, bool Cancelled)
 {
 	/// <summary>
@@ -134,8 +133,6 @@ public sealed class Executor
 		RunId run, IReadOnlyList<PlanEntry> entries, IReadOnlyList<Operation> operations, Func<OpId, OpMark> marks,
 		JournalWriter journal, IProgress<RunProgress>? progress, CancellationToken cancel)
 	{
-		// Asked once, latest operation first: see DiskOverlay. Asking each operation in turn would find a recycle
-		// "not done" after the move that followed it put a file at its path, and recycle that file.
 		HashSet<OpId> held = DiskOverlay.Held(operations, marks, disk);
 		var results = new Dictionary<OpId, OpResult>();
 		bool cancelled = false;
@@ -188,7 +185,6 @@ public sealed class Executor
 				disk.Move(move.From, move.To);
 				break;
 			case Operation.RenameCase rename:
-				// A fixed name, so a run that crashed between the two steps is finished by the second step alone.
 				AbsPath temporary = rename.To.Parent.Combine(rename.To.Name + CaseRenameSuffix);
 				if (!disk.FileExists(temporary))
 				{
@@ -214,7 +210,6 @@ public sealed class Executor
 		}
 	}
 
-	/// <summary>Returns the library book the operation created.</summary>
 	private BookId? ChangeLibrary(Operation operation)
 	{
 		switch (operation)
@@ -245,7 +240,6 @@ public sealed class Executor
 		{
 			try
 			{
-				// A folder that is already gone does not end the walk: its parent may be empty now.
 				for (AbsPath folder = candidate; !folder.IsRoot && !prune.StopAt.Contains(folder) && !prune.Keep.Contains(folder); folder = folder.Parent)
 				{
 					if (!disk.FolderExists(folder))

@@ -7,7 +7,6 @@ namespace LibraryOrganizer.Tests;
 
 public class FieldsTests
 {
-	// The Field names table of the 2.x template engine reference ('#' is a format suffix, so "month#" is not a name).
 	private static readonly string[] TemplateNames2x =
 	[
 		"series", "number", "count", "volume", "year", "month", "Day", "title", "format", "publisher", "imprint", "altSeries",
@@ -17,7 +16,6 @@ public class FieldsTests
 		"firstissuenumber", "lastissuenumber", "ReleasedDate", "AddedDate", "Rating", "CommunityRating", "Custom",
 	];
 
-	// The field list of the 2.x rule editor.
 	private static readonly string[] RuleEditorNames2x =
 	[
 		"Age Rating", "Alternate Count", "Alternate Number", "Alternate Series", "Black And White", "Characters", "Count",

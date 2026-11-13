@@ -4,7 +4,6 @@ using System.Windows.Forms;
 
 namespace LibraryOrganizer.Plugin.Forms;
 
-/// <summary>Which books a profile organizes: a rule tree and a list of excluded folders.</summary>
 internal sealed class RulesTab : ProfileEditor
 {
 	private readonly ComboBox mode = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 90, Margin = new Padding(0, 1, 6, 1) };

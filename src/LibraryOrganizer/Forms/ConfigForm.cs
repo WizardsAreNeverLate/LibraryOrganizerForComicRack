@@ -242,7 +242,6 @@ public sealed class ConfigForm : Form
 		LoadCurrent();
 	}
 
-	/// <summary>Collects the current profile and checks it. When it has problems they are shown and the user stays.</summary>
 	private bool LeaveCurrent()
 	{
 		CollectCurrent();

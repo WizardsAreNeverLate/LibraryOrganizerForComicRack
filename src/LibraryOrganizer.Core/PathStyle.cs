@@ -26,7 +26,6 @@ public sealed record PathStyle(
 			.Concat(Enumerable.Range(1, 9).SelectMany(n => new[] { "COM" + n, "LPT" + n })),
 		StringComparer.OrdinalIgnoreCase);
 
-	/// <summary>The 2.x defaults.</summary>
 	public static PathStyle Default { get; } = new(
 		PathDefaults.IllegalCharacters, CollapseSpaces: true, EmptyFolderName: "", new Dictionary<Field, string>(), PathDefaults.MonthNames);
 
@@ -71,7 +70,6 @@ public sealed record PathStyle(
 			}
 			else if (piece is Piece.Placeholder placeholder)
 			{
-				// Its '?' must survive, so it bypasses the table.
 				name.Append(ReplaceIllegal(text.ToString())).Append('‹').Append(placeholder.Name).Append("?›");
 				text.Clear();
 			}
@@ -113,7 +111,6 @@ public sealed record PathStyle(
 				at += table[match].Key.Length;
 			}
 		}
-		// The table is user-editable. Whatever it leaves or writes, no separator or other character Windows forbids gets through.
 		for (int i = replaced.Length - 1; i >= 0; i--)
 		{
 			if (replaced[i] < ' ' || "<>:\"/\\|?*".IndexOf(replaced[i]) >= 0)

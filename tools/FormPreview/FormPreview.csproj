@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<!-- Opens the configure dialog without ComicRack, or the review dialog with the review option. With the screenshot option and a file name it renders every form to PNGs and exits. -->
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<IsPackable>false</IsPackable>

@@ -169,7 +169,6 @@ public sealed class QuestionDialog : Form
 	}
 }
 
-/// <summary>The two lists of <see cref="QuestionDialog"/> and the answer they make, apart from the controls.</summary>
 internal sealed class ItemSelection
 {
 	private readonly List<string> choices;

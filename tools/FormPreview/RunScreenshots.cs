@@ -10,7 +10,6 @@ using LibraryOrganizer.Plugin.Forms.Run;
 
 namespace LibraryOrganizer.FormPreview;
 
-/// <summary>Renders the run-side forms over real planning, and exercises the re-plan path the way a click would.</summary>
 internal static class RunScreenshots
 {
 	public static void Render(string stem, Action<Form, string> capture)

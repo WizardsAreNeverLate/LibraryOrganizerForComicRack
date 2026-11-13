@@ -9,8 +9,6 @@ public class RenderTests
 {
 	private static RenderContext InXMenSeries(BookRecord book) => DefaultContext with { Series = XMenSeries(book) };
 
-	// The "Test vectors" table of the 2.x rebuild guide. The multi-value row is in MultiValueTests.
-
 	[Test]
 	public async Task Vector_default_file_template()
 	{
@@ -36,7 +34,6 @@ public class RenderTests
 	[Test]
 	[Arguments("{<number3>}", "7.1", "007.1")]
 	[Arguments("{<number3>}", "-1.5", "-001.5")]
-	// The padding table of the 2.x template engine reference.
 	[Arguments("{<number3>}", "7", "007")]
 	[Arguments("{<number2>}", "-1.5", "-01.5")]
 	[Arguments("{<number2>}", "123", "123")]
@@ -88,8 +85,6 @@ public class RenderTests
 	{
 		await Assert.That(FileName("{<series>}: Part 1", XMen7())).IsEqualTo("X-Men - Part 1");
 	}
-
-	// The conditional and inversion table of the 2.x template engine reference.
 
 	[Test]
 	[Arguments("X{ (Annual)<?format(Annual)>}", "Annual", "X (Annual)")]

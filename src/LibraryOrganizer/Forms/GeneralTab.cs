@@ -3,7 +3,6 @@ using System.Windows.Forms;
 
 namespace LibraryOrganizer.Plugin.Forms;
 
-/// <summary>Action, destination and what to do with books that cannot be organized.</summary>
 internal sealed class GeneralTab : ProfileEditor
 {
 	private static readonly (string Text, CoverFormat? Format)[] CoverChoices =
