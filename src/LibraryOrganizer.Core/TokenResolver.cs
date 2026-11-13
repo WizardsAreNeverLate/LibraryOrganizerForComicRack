@@ -10,6 +10,9 @@ internal static class TokenResolver
 {
 	private const int MaxPadWidth = 50;
 
+	// 2.x: an empty pattern after "!" never matches.
+	private const string NeverMatches = "(?!)";
+
 	/// <param name="digits">The digit run after the name, or null. Never set together with <paramref name="arguments"/>.</param>
 	/// <param name="arguments">The contents of each parenthesized group, in order.</param>
 	public static (Token? Token, IReadOnlyList<TemplateError> Errors) Resolve(
@@ -80,7 +83,7 @@ internal static class TokenResolver
 		Regex pattern;
 		try
 		{
-			string body = argument.Length == 1 ? "(?!)" : argument.Substring(1);
+			string body = argument.Length == 1 ? NeverMatches : argument.Substring(1);
 			pattern = new Regex(@"\A(?:" + body + ")", RegexOptions.CultureInvariant);
 		}
 		catch (ArgumentException e)
