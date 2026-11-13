@@ -12,6 +12,9 @@
 		<Reference Include="System.Xml.Linq" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Include="..\fixtures\**\*" Link="fixtures\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+	<ItemGroup>
 		<ProjectReference Include="..\..\src\LibraryOrganizer.Core\LibraryOrganizer.Core.csproj" />
 	</ItemGroup>
 </Project>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Profiles LastUsed="Nobody">
+	<Profile Name="Simulated" Version="2.1">
+		<Mode>Simulate</Mode>
+		<FailEmptyValues>true</FailEmptyValues>
+		<FailedFields>
+			<Item>ShadowSeries</Item>
+			<Item>ShadowNumber</Item>
+			<Item>Not A Field</Item>
+		</FailedFields>
+		<MoveFailed>true</MoveFailed>
+		<FailedFolder>D:\Failed</FailedFolder>
+	</Profile>
+	<Profile Name="Disabled" Version="2.1">
+		<FailEmptyValues>false</FailEmptyValues>
+		<FailedFields>
+			<Item>ShadowSeries</Item>
+		</FailedFields>
+		<MoveFailed>false</MoveFailed>
+		<FailedFolder>D:\Ignored</FailedFolder>
+	</Profile>
+	<Profile Name="Copier" Version="2.1">
+		<Mode>Copy</Mode>
+		<CopyMode>false</CopyMode>
+	</Profile>
+</Profiles>
