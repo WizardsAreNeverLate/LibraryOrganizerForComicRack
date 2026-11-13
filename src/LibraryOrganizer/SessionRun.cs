@@ -70,7 +70,7 @@ internal sealed partial class Session
 				continue;
 			}
 			RunJournal journal = Journals.Read(run);
-			IReadOnlyDictionary<AbsPath, BookId> libraryFiles = LibrarySnapshot.Take([], env.App.GetLibraryBooks()).LibraryFiles;
+			ILookup<AbsPath, BookId> libraryFiles = LibrarySnapshot.Take([], env.App.GetLibraryBooks()).PathOwners;
 			Decisions decisions = Decisions.None with { Answers = Answers };
 			Plan Replan(Decisions decisions) => Organizer.PlanUndo(journal, disk, libraryFiles, decisions);
 			if (Review(WithWaitCursor(() => Replan(decisions)), Replan, decisions) is ApprovedPlan undo)

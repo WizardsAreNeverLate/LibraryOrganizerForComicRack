@@ -275,10 +275,11 @@ all its operations succeeded, failed when one failed, and skipped when a cancel 
   proof that it is the file the run put there. The evidence considered: later journals, the library index, and a file
   size recorded at plan time. Later journals see only plugin runs, `Trim` deletes them, and an undo of a later run
   makes the sequence hard to read. A size needs a new journal attribute, so a schema bump. The library index sees every
-  move the library knows of, and it is one lookup. So `Organizer.PlanUndo` takes `libraryFiles`, the same index as
-  `OrganizeInput.LibraryFiles`. The plugin builds it from `GetLibraryBooks()` when the user picks a run to undo. When
-  the index says a book other than the operation's book has its file at a move's or case rename's target, the undo
-  leaves that file and the entry is `Skipped` with the path. Copies and covers keep the existing checks: a copy
+  move the library knows of, and it is one lookup. So `Organizer.PlanUndo` takes `libraryFiles`, an `ILookup` from path to every library book
+  at that path (`LibrarySnapshot.PathOwners`). ComicRack can list two books at one path when one of them lost its file,
+  so a path-to-one-book index made undo depend on library order; a second review proved both a missed case and a false
+  refusal with that index. When any book other than the operation's own is listed at a move's or case rename's
+  target, the undo leaves that file, even if the other entry is stale: refusing is safe, moving the wrong file is not and the entry is `Skipped` with the path. Copies and covers keep the existing checks: a copy
   compares sizes while its source can be read. Two gaps remain. A file at the target that no library book holds is
   still taken for the run's file. `Resume` still takes "source gone, target there" as done, because the executor has
   no index; there the worst case is a library path that names the wrong file, and no file moves.

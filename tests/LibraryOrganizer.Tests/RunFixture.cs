@@ -184,7 +184,7 @@ internal sealed class RealShelf : IDisposable
 	public Plan Plan(params Profile[] runOrder) => Plan(Decisions.None, runOrder);
 
 	public Plan PlanUndo(RunId run, Decisions? decisions = null)
-		=> Organizer.PlanUndo(Journals.Read(run), Disk, Library.Paths.ToDictionary(pair => pair.Value, pair => pair.Key), decisions ?? Decisions.None);
+		=> Organizer.PlanUndo(Journals.Read(run), Disk, Library.Paths.ToLookup(pair => pair.Value, pair => pair.Key), decisions ?? Decisions.None);
 
 	public Executor Executor(IFileSystem? disk = null) => new(disk ?? Disk, Library, Journals);
 

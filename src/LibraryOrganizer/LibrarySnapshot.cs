@@ -10,6 +10,7 @@ internal sealed record LibrarySnapshot(
 	IReadOnlyList<BookRecord> Selection,
 	SeriesIndex Series,
 	IReadOnlyDictionary<AbsPath, BookId> LibraryFiles,
+	ILookup<AbsPath, BookId> PathOwners,
 	IReadOnlyList<string> Unreadable)
 {
 	public static LibrarySnapshot Take(IEnumerable<ComicBook> selection, IEnumerable<ComicBook> library)
@@ -32,17 +33,19 @@ internal sealed record LibrarySnapshot(
 		var selected = new HashSet<BookId>(records.Select(record => record.Id));
 		var members = new List<BookRecord>(records);
 		var files = new Dictionary<AbsPath, BookId>();
+		var owners = new List<(AbsPath Path, BookId Book)>();
 		foreach (ComicBook book in library)
 		{
 			if (book.IsLinked && AbsPath.TryParse(book.FilePath) is AbsPath path)
 			{
 				files[path] = new BookId(book.Id);
+				owners.Add((path, new BookId(book.Id)));
 			}
 			if (!selected.Contains(new BookId(book.Id)) && wanted.Contains(BookSnapshot.KeyOf(book)) && BookSnapshot.Record(book) is BookRecord member)
 			{
 				members.Add(member);
 			}
 		}
-		return new LibrarySnapshot(records, SeriesIndex.Build(members), files, unreadable);
+		return new LibrarySnapshot(records, SeriesIndex.Build(members), files, owners.ToLookup(owner => owner.Path, owner => owner.Book), unreadable);
 	}
 }

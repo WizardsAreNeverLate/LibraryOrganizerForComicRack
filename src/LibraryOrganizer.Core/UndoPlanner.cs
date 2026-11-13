@@ -28,7 +28,7 @@ internal static class UndoPlanner
 				: new EntryOutcome.Skipped(Skipped ?? NothingToUndo);
 	}
 
-	public static Plan Plan(RunJournal journal, IFileProbe disk, IReadOnlyDictionary<AbsPath, BookId> libraryFiles, Decisions decisions)
+	public static Plan Plan(RunJournal journal, IFileProbe disk, ILookup<AbsPath, BookId> libraryFiles, Decisions decisions)
 	{
 		var overlay = new DiskOverlay(disk, journal.Operations, journal.Mark);
 		var rows = new List<Row>();
@@ -50,9 +50,9 @@ internal static class UndoPlanner
 			{
 				continue;
 			}
-			if (BookFileAt(original) is { } at && libraryFiles.TryGetValue(at, out BookId holder) && holder != original.Entry.Book)
+			if (BookFileAt(original) is { } at && libraryFiles[at].Any(holder => holder != original.Entry.Book))
 			{
-				row.Skipped = $"The file at {at} is now another library book's";
+				row.Skipped = $"Another library book is at {at}, so the file there may not be this book's";
 				continue;
 			}
 			Operation? inverse = original.Inverse(new OpId(operations.Count + 1), journal.Mark(original.Id).Created);

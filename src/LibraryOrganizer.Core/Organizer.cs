@@ -21,13 +21,14 @@ public static class Organizer
 	/// inverse, latest first, so a run that crashed is undone exactly as far as it got. An operation with no inverse
 	/// (a recycled file) shows as a failed entry. A move back to a path that something else now holds is a
 	/// <see cref="ConflictKind.TargetExists"/> conflict that allows Skip and Keep both. A file the run moved is left
-	/// where it is, as a skipped entry, when <paramref name="libraryFiles"/> says another book's file is at that path
+	/// where it is, as a skipped entry, when <paramref name="libraryFiles"/> names any other book at that path
 	/// now. A case rename cut short between its two steps is undone from its temporary name. Books are found by id and
 	/// paths come from the journal, so a profile renamed or deleted since the run changes nothing. A folder the run
 	/// pruned is created again when a file moves back into it.
 	/// </remarks>
-	/// <param name="libraryFiles">Every library book's file, as in <see cref="OrganizeInput.LibraryFiles"/>.</param>
-	public static Plan PlanUndo(RunJournal journal, IFileProbe disk, IReadOnlyDictionary<AbsPath, BookId> libraryFiles, Decisions decisions)
+	/// <param name="libraryFiles">Every library book by its file path. ComicRack can list two books at one path, for one whose file is
+	/// gone, so a path can have several books; any book other than the operation's own makes undo leave the file.</param>
+	public static Plan PlanUndo(RunJournal journal, IFileProbe disk, ILookup<AbsPath, BookId> libraryFiles, Decisions decisions)
 		=> UndoPlanner.Plan(journal, disk, libraryFiles, decisions);
 
 	/// <summary>
