@@ -68,7 +68,7 @@ profiles.
 Undo works from what is on disk now. It moves each file back, removes copies the run made, and removes the folders the
 run left empty. A file that a run replaced went to the Recycle Bin, and undo does not restore it.
 
-If ComicRack closed in the middle of a run, the next command offers to finish it. **Finish** in the history window does
+If ComicRack closed in the middle of a run, the next Library Organizer run offers to finish it. **Finish** in the history window does
 the same.
 
 ## Write templates
