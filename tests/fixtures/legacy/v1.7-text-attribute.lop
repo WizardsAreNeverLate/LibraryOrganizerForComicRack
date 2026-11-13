@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Settings LastUsed="Old">
+	<Setting Name="Old">
+		<FolderTemplate>{&lt;publisher&gt;}</FolderTemplate>
+		<FileTemplate>{&lt;series&gt;}</FileTemplate>
+		<Mode>Test</Mode>
+		<EmptyData>
+			<Item Name="Series" Value="No Series" />
+			<Item Name="Language" Value="xx" />
+		</EmptyData>
+		<Prefix>
+			<Item Name="StartYear" Value="(" />
+		</Prefix>
+		<ExcludeRules Operator="Any" ExcludeMode="Only">
+			<ExcludeRule Field="Writer" Operator="contains" Text="Moore" />
+		</ExcludeRules>
+	</Setting>
+</Settings>

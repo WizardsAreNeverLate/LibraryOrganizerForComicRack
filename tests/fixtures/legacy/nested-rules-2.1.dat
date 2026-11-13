@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Profiles LastUsed="Manga,Default">
+	<Profile Name="Default" Version="2.1">
+		<FolderTemplate>{&lt;publisher&gt;}\{&lt;series&gt;}</FolderTemplate>
+		<BaseFolder>D:\Comics</BaseFolder>
+		<FileTemplate>{&lt;series&gt;}{ #&lt;number3&gt;}</FileTemplate>
+		<EmptyData>
+			<Item Name="Publisher" Value="Unknown Publisher" />
+			<Item Name="ShadowSeries" Value="Untitled" />
+			<Item Name="Nonsense" Value="x" />
+		</EmptyData>
+		<IllegalCharacters>
+			<Item Name=":" Value="-" />
+			<Item Name="%" Value="pct" />
+		</IllegalCharacters>
+		<Months>
+			<Item Name="3" Value="Mar" />
+		</Months>
+		<Prefix>
+			<Item Name="Start Year" Value="(" />
+		</Prefix>
+		<ExcludeFolders>
+			<Item>D:\Comics\Unsorted</Item>
+			<Item>Unsorted</Item>
+		</ExcludeFolders>
+		<ExcludeOperator>All</ExcludeOperator>
+		<ExcludeMode>Only</ExcludeMode>
+		<RemoveEmptyFolder>false</RemoveEmptyFolder>
+		<ExcludedEmptyFolder>
+			<Item>D:\Comics\Keep</Item>
+		</ExcludedEmptyFolder>
+		<MoveFileless>true</MoveFileless>
+		<FilelessFormat>.png</FilelessFormat>
+		<ExcludeRules Operator="Any" ExcludeMode="Do not">
+			<ExcludeRule Field="Publisher" Operator="is" Value="DC" />
+			<ExcludeGroup Operator="All">
+				<ExcludeRule Field="Format" Operator="contains" Value="Annual" />
+				<ExcludeRule Field="Year" Operator="less than" Value="1990" />
+				<ExcludeGroup Operator="Any">
+					<ExcludeRule Field="Manga" Operator="is" Value="Yes (Right to Left)" />
+					<ExcludeRule Field="Bogus Field" Operator="is" Value="1" />
+					<ExcludeRule Field="Released Date" Operator="greater than" Value="2020-01-01" />
+				</ExcludeGroup>
+			</ExcludeGroup>
+			<ExcludeRule Field="Year" Operator="contains" Value="19" />
+		</ExcludeRules>
+	</Profile>
+	<Profile Name="Manga" Version="2.1">
+		<Mode>Copy</Mode>
+		<CopyMode>true</CopyMode>
+		<ExcludeRules Operator="All" ExcludeMode="Only">
+			<ExcludeRule Field="Manga" Operator="is not" Value="No" />
+		</ExcludeRules>
+	</Profile>
+	<Profile Name="Default" Version="2.1">
+		<FolderTemplate>{&lt;series&gt;}</FolderTemplate>
+	</Profile>
+</Profiles>
