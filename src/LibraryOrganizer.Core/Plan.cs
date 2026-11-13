@@ -114,7 +114,7 @@ public sealed record ProfileTally(string Profile, int Planned, int InPlace, int 
 
 public readonly record struct OpId(int Value);
 
-/// <summary>A file-system change plus its library effect. Closed, plain data: the executor gives each case its behavior.</summary>
+/// <summary>A file-system change plus its library effect. Closed. Each case knows its end state and its undo; the executor does the work.</summary>
 public abstract record Operation
 {
 	private Operation() { }
@@ -138,7 +138,7 @@ public abstract record Operation
 	public sealed record WriteCover(OpId Id, EntryKey Entry, AbsPath To, CoverFormat Format) : Operation;
 
 	/// <summary>
-	/// Sends a file to the Recycle Bin, from a Replace resolution. ExistingBook leaves the library, and when
+	/// Sends a file to the Recycle Bin, from a Replace resolution or the undo of a copy. ExistingBook leaves the library, and when
 	/// TransferReadProgressTo is set, its read progress goes to that book first.
 	/// </summary>
 	public sealed record RecycleFile(OpId Id, EntryKey Entry, AbsPath Path, BookId? ExistingBook, BookId? TransferReadProgressTo) : Operation;
@@ -151,6 +151,40 @@ public abstract record Operation
 	{
 		public override EntryKey Entry { get; init; }
 	}
+
+	/// <summary>
+	/// True when the end state of this operation already holds on the disk. Move: the source is gone and the target is
+	/// there. Copy: the target is there, with the size of the source when the source can still be read. Cover: the
+	/// target is there. Case rename: the name on the disk has the target spelling. Recycle: the file is gone.
+	/// Prune: never, because it is safe to repeat.
+	/// </summary>
+	/// <remarks>
+	/// One operation alone. In a plan, a later operation can fill the path an earlier one vacated, so the executor and
+	/// the undo planner ask in reverse order through <see cref="DiskOverlay"/>.
+	/// </remarks>
+	public bool IsSatisfied(IFileProbe disk) => this switch
+	{
+		MoveFile move => !disk.FileExists(move.From) && disk.FileExists(move.To),
+		RenameCase rename => string.Equals(disk.ActualName(rename.To), rename.To.Name, StringComparison.Ordinal),
+		CopyFile copy => disk.FileExists(copy.To) && (disk.FileSize(copy.From) is not { } size || disk.FileSize(copy.To) == size),
+		WriteCover cover => disk.FileExists(cover.To),
+		RecycleFile recycle => !disk.FileExists(recycle.Path),
+		_ => false,
+	};
+
+	/// <summary>
+	/// The operation that undoes this one, or null when nothing can: a recycled file cannot be restored, and a pruned
+	/// folder comes back when a file is moved into it.
+	/// </summary>
+	/// <param name="createdBook">The library book a copy created. The undo removes it with the copied file.</param>
+	public Operation? Inverse(OpId id, BookId? createdBook = null) => this switch
+	{
+		MoveFile move => new MoveFile(id, Entry, move.To, move.From),
+		RenameCase rename => new RenameCase(id, Entry, rename.To, rename.From),
+		CopyFile copy => new RecycleFile(id, Entry, copy.To, createdBook, null),
+		WriteCover cover => new RecycleFile(id, Entry, cover.To, null, null),
+		_ => null,
+	};
 }
 
 public readonly record struct ConflictKey(EntryKey Entry, AbsPath Target);
