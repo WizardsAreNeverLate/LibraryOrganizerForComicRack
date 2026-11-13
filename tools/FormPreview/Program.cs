@@ -14,6 +14,11 @@ internal static class Program
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);
 
+		if (Array.IndexOf(args, "--review") >= 0)
+		{
+			RunScreenshots.Interactive();
+			return 0;
+		}
 		int flag = Array.IndexOf(args, "--screenshot");
 		using var form = new ConfigForm(Sample(), customKeys: ["Reading list", "Source"])
 		{
@@ -104,6 +109,7 @@ internal static class Program
 		Capture(form, stem + "-rules-errors.png");
 		form.CheckAll();
 		Capture(form, stem + "-problems.png");
+		RunScreenshots.Render(stem, Capture);
 	}
 
 	private static void Capture(Form form, string path)

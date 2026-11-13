@@ -19,6 +19,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="LibraryOrganizer.Tests" />
 		<InternalsVisibleTo Include="LibraryOrganizer.Plugin.Tests" />
+		<InternalsVisibleTo Include="FormPreview" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="Package\**\*" />
