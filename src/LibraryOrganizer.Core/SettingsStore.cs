@@ -71,8 +71,53 @@ public sealed class SettingsStore
 	public void Save(Settings settings)
 	{
 		Directory.CreateDirectory(dataFolder);
-		XDocument document = SettingsXml.Write(settings);
-		string temp = Path + ".tmp-" + Guid.NewGuid().ToString("N");
+		WriteAtomically(Path, SettingsXml.Write(settings));
+	}
+
+	/// <summary>Writes the profiles to a file the user chose, in the settings.xml schema, so it can be imported on another machine.</summary>
+	public static void Export(string file, IReadOnlyList<ProfileSettings> profiles)
+		=> WriteAtomically(file, SettingsXml.Write(new Settings(profiles, [], RunPreferences.Default)));
+
+	/// <summary>
+	/// Reads an export or settings.xml (root &lt;LibraryOrganizer&gt;) or a 2.x/1.7 profile file, chosen by the root element.
+	/// Every imported profile gets a new <see cref="ProfileId"/>. A file that cannot be read gives no profiles and a warning.
+	/// </summary>
+	public static ImportResult ImportFile(string file)
+	{
+		XDocument document;
+		try
+		{
+			document = XDocument.Load(file);
+		}
+		catch (Exception ex) when (ex is XmlException or IOException or UnauthorizedAccessException)
+		{
+			return new ImportResult([], [], [$"{System.IO.Path.GetFileName(file)} could not be read: {ex.Message}"]);
+		}
+		if (document.Root?.Name != "LibraryOrganizer")
+		{
+			return LegacyImport.Read(document);
+		}
+
+		var warnings = new List<string>();
+		if (!int.TryParse((string?)document.Root.Attribute("schema"), NumberStyles.None, CultureInfo.InvariantCulture, out int schema))
+		{
+			return new ImportResult([], [], ["The file has no valid schema attribute, so it is not a Library Organizer export."]);
+		}
+		if (schema > SchemaVersion)
+		{
+			return new ImportResult([], [], [$"The file uses schema {schema}, which is newer than this plugin understands ({SchemaVersion}). Update the plugin to import it."]);
+		}
+		Settings settings = SettingsXml.Read(document.Root, warnings);
+		var newIds = settings.Profiles.ToDictionary(profile => profile.Id, _ => new ProfileId(Guid.NewGuid()));
+		return new ImportResult(
+			[.. settings.Profiles.Select(profile => profile with { Id = newIds[profile.Id] })],
+			[.. settings.LastRunOrder.Select(id => newIds[id])],
+			warnings);
+	}
+
+	private static void WriteAtomically(string path, XDocument document)
+	{
+		string temp = path + ".tmp-" + Guid.NewGuid().ToString("N");
 		try
 		{
 			var writerSettings = new XmlWriterSettings
@@ -87,13 +132,13 @@ public sealed class SettingsStore
 			{
 				document.Save(writer);
 			}
-			if (File.Exists(Path))
+			if (File.Exists(path))
 			{
-				File.Replace(temp, Path, null);
+				File.Replace(temp, path, null);
 			}
 			else
 			{
-				File.Move(temp, Path);
+				File.Move(temp, path);
 			}
 		}
 		finally

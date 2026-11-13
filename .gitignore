@@ -5,3 +5,4 @@ obj/
 TestResults/
 *.crplugin
 .claude/
+tools/FormPreview/shots/

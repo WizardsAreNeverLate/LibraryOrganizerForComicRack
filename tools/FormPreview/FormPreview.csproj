@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<!-- Opens the configure dialog without ComicRack. With the screenshot option and a file name it renders each tab to a PNG and exits. -->
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<IsPackable>false</IsPackable>
+		<Prefer32Bit>false</Prefer32Bit>
+		<UsesComicRack>true</UsesComicRack>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="ComicRack.Plugins" HintPath="$(ComicRackPath)ComicRack.Plugins.dll" />
+		<Reference Include="ComicRack.Engine" HintPath="$(ComicRackPath)ComicRack.Engine.dll" />
+		<Reference Include="cYo.Common" HintPath="$(ComicRackPath)cYo.Common.dll" />
+		<Reference Include="cYo.Common.Windows" HintPath="$(ComicRackPath)cYo.Common.Windows.dll" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\LibraryOrganizer.Core\LibraryOrganizer.Core.csproj" />
+		<ProjectReference Include="..\..\src\LibraryOrganizer\LibraryOrganizer.csproj" />
+	</ItemGroup>
+</Project>
