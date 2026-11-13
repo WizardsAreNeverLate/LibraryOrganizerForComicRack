@@ -67,8 +67,6 @@ public sealed record RunReport(RunId Run, IReadOnlyList<PlanEntry> Entries, IRea
 /// </remarks>
 public sealed class Executor
 {
-	private const string CaseRenameSuffix = ".lo-rename";
-
 	private readonly IFileSystem disk;
 	private readonly ILibraryGateway library;
 	private readonly JournalStore journals;
@@ -185,12 +183,11 @@ public sealed class Executor
 				disk.Move(move.From, move.To);
 				break;
 			case Operation.RenameCase rename:
-				AbsPath temporary = rename.To.Parent.Combine(rename.To.Name + CaseRenameSuffix);
-				if (!disk.FileExists(temporary))
+				if (!disk.FileExists(rename.Temporary))
 				{
-					disk.Move(rename.From, temporary);
+					disk.Move(rename.From, rename.Temporary);
 				}
-				disk.Move(temporary, rename.To);
+				disk.Move(rename.Temporary, rename.To);
 				break;
 			case Operation.CopyFile copy:
 				disk.CreateFolder(copy.To.Parent);

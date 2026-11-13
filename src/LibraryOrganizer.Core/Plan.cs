@@ -128,7 +128,14 @@ public abstract record Operation
 	public sealed record MoveFile(OpId Id, EntryKey Entry, AbsPath From, AbsPath To) : Operation;
 
 	/// <summary>A change of spelling only, done through a temporary name: CE's ComicBook.RenameFile ignores it.</summary>
-	public sealed record RenameCase(OpId Id, EntryKey Entry, AbsPath From, AbsPath To) : Operation;
+	public sealed record RenameCase(OpId Id, EntryKey Entry, AbsPath From, AbsPath To) : Operation
+	{
+		/// <summary>
+		/// Where the file is between the two steps. A rename and its inverse name the same file here, because their
+		/// names differ only in case.
+		/// </summary>
+		public AbsPath Temporary => To.Parent.Combine(To.Name + ".lo-rename");
+	}
 
 	/// <summary>Copies the file. With AddToLibrary the library gets an entry with the source's metadata and a new id.</summary>
 	public sealed record CopyFile(OpId Id, EntryKey Entry, AbsPath From, AbsPath To, bool AddToLibrary) : Operation;

@@ -28,9 +28,9 @@ internal static class UndoPlanner
 				: new EntryOutcome.Skipped(Skipped ?? NothingToUndo);
 	}
 
-	public static Plan Plan(RunJournal journal, IFileProbe disk, Decisions decisions)
+	public static Plan Plan(RunJournal journal, IFileProbe disk, ILookup<AbsPath, BookId> libraryFiles, Decisions decisions)
 	{
-		var overlay = new DiskOverlay(disk);
+		var overlay = new DiskOverlay(disk, journal.Operations, journal.Mark);
 		var rows = new List<Row>();
 		var rowOf = new Dictionary<EntryKey, Row>();
 		var operations = new List<Operation>();
@@ -45,12 +45,17 @@ internal static class UndoPlanner
 				rowOf[original.Entry] = row = new Row(entry);
 				rows.Add(row);
 			}
-			OpMark mark = journal.Mark(original.Id);
-			if (!overlay.Holds(original, mark.File))
+			bool renameCutShort = original is Operation.RenameCase rename && overlay.FileExists(rename.Temporary);
+			if (!overlay.Holds(original) && !renameCutShort)
 			{
 				continue;
 			}
-			Operation? inverse = original.Inverse(new OpId(operations.Count + 1), mark.Created);
+			if (BookFileAt(original) is { } at && libraryFiles[at].Any(holder => holder != original.Entry.Book))
+			{
+				row.Skipped = $"Another library book is at {at}, so the file there may not be this book's";
+				continue;
+			}
+			Operation? inverse = original.Inverse(new OpId(operations.Count + 1), journal.Mark(original.Id).Created);
 			if (inverse is null)
 			{
 				row.Irreversible = true;
@@ -105,4 +110,12 @@ internal static class UndoPlanner
 			operations,
 			decisions.Answers);
 	}
+
+	/// <summary>Where the operation left the book's own file. A copy or a cover is a new file, so it has none.</summary>
+	private static AbsPath? BookFileAt(Operation operation) => operation switch
+	{
+		Operation.MoveFile move => move.To,
+		Operation.RenameCase rename => rename.To,
+		_ => null,
+	};
 }

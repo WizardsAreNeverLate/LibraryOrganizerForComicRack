@@ -60,6 +60,25 @@ public class SettingsExportImportTests
 	}
 
 	[Test]
+	public async Task Import_and_load_keep_a_replacement_that_is_only_a_space()
+	{
+		using var folder = new TempFolder();
+		var spaces = new ProfileSettings
+		{
+			Name = "Spaces",
+			IllegalCharacters = [.. PathDefaults.IllegalCharacters.Where(pair => pair.Key != "/"), new("/", " ")],
+			EmptySubstitutes = new Dictionary<string, string> { ["imprint"] = " " },
+		};
+		SettingsStore.Export(folder.File("settings.xml"), [spaces]);
+
+		ProfileSettings imported = SettingsStore.ImportFile(folder.File("settings.xml")).Profiles.Single();
+		ProfileSettings loaded = new SettingsStore(folder.Path).Load().Settings.Profiles.Single();
+
+		await Assert.That(loaded).IsEqualTo(spaces);
+		await Assert.That(imported).IsEqualTo(spaces with { Id = imported.Id });
+	}
+
+	[Test]
 	public async Task A_2x_file_imports_through_the_legacy_importer()
 	{
 		ImportResult result = SettingsStore.ImportFile(Fixture("default-2.1.dat"));

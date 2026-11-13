@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LibraryOrganizer.Tests;
@@ -9,6 +10,7 @@ public sealed class UndoTests : IDisposable
 	private const string Seven = @"Incoming\seven.cbz";
 	private const string Eight = @"Incoming\eight.cbz";
 	private const string SevenOrganized = @"Comics\Marvel\X-Men\X-Men #7.cbz";
+	private const string EightOrganized = @"Comics\Marvel\X-Men\X-Men #8.cbz";
 	private const string SevenBackup = @"Backup\Marvel\X-Men\X-Men #7.cbz";
 
 	private readonly RealShelf shelf = new();
@@ -138,6 +140,68 @@ public sealed class UndoTests : IDisposable
 
 		await Assert.That(shelf.Files()).IsEqualTo(Seven);
 		await Assert.That(shelf.PathOf(seven)).IsEqualTo(Seven);
+	}
+
+	[Test]
+	public async Task Undo_leaves_a_file_that_another_library_book_now_holds_at_the_runs_target()
+	{
+		const string Other = @"Incoming\other.cbz";
+		BookRecord seven = shelf.Add(Seven, "7");
+		RunReport first = shelf.Run(shelf.Plan(shelf.Profile()));
+		System.IO.File.Move(shelf.P(SevenOrganized).Value, shelf.P(EightOrganized).Value);
+		shelf.Library.Paths[seven.Id] = shelf.P(EightOrganized);
+		shelf.Selection.Clear();
+		BookRecord other = shelf.Add(Other, "7");
+		shelf.Run(shelf.Plan(shelf.Profile()));
+
+		Plan undo = shelf.PlanUndo(first.Run);
+
+		await Assert.That(undo.Operations.Script()).IsEqualTo("");
+		await Assert.That(((EntryOutcome.Skipped)undo.Entries.Single().Outcome).Reason).Contains(shelf.P(SevenOrganized).Value);
+
+		shelf.Run(undo);
+
+		await Assert.That(shelf.Files()).IsEqualTo(Lines(SevenOrganized, EightOrganized));
+		await Assert.That(shelf.Read(SevenOrganized)).IsEqualTo(RealShelf.ContentOf(Other));
+		await Assert.That(shelf.PathOf(seven)).IsEqualTo(EightOrganized);
+		await Assert.That(shelf.PathOf(other)).IsEqualTo(SevenOrganized);
+	}
+
+	[Test]
+	public async Task Undo_of_a_run_killed_inside_a_case_rename_restores_the_original_spelling()
+	{
+		const string LowerCase = @"Comics\Marvel\X-Men\x-men #7.cbz";
+		BookRecord seven = shelf.Add(LowerCase, "7");
+		RunId run = shelf.RunUntilKilled(shelf.Plan(shelf.Profile()), afterChanges: 1);
+
+		Plan undo = shelf.PlanUndo(run);
+
+		await Assert.That(undo.Operations.Script()).IsEqualTo($"case {shelf.P(SevenOrganized)} -> {shelf.P(LowerCase)}");
+
+		shelf.Run(undo);
+
+		await Assert.That(shelf.Files()).IsEqualTo(LowerCase);
+		await Assert.That(shelf.Read(LowerCase)).IsEqualTo(RealShelf.ContentOf(LowerCase));
+		await Assert.That(shelf.Library.Paths[seven.Id].Value).IsEqualTo(shelf.P(LowerCase).Value);
+	}
+
+	[Test]
+	public async Task Undo_of_a_replace_that_never_ran_leaves_the_file_it_would_have_replaced()
+	{
+		const string Cover = @"Comics\Marvel\X-Men\X-Men #7.jpg";
+		shelf.Selection.Add(TestBooks.Fileless(number: "7"));
+		shelf.Put(Cover, "the old cover");
+		Profile covers = shelf.Profile(edit: settings => settings with { FilelessCovers = CoverFormat.Jpg });
+		Plan plan = shelf.Plan(Decisions.None.WithDefault(new Resolution.Replace()), covers);
+		RunReport cancelled = shelf.Executor().Run(plan.Approve()!, null, new CancellationToken(canceled: true));
+
+		Plan undo = shelf.PlanUndo(cancelled.Run);
+
+		await Assert.That(undo.Operations.Script()).IsEqualTo("");
+
+		shelf.Run(undo);
+
+		await Assert.That(shelf.Read(Cover)).IsEqualTo("the old cover");
 	}
 
 	[Test]

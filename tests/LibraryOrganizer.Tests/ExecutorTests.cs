@@ -79,10 +79,7 @@ public sealed class ExecutorTests : IDisposable
 	[Test]
 	public async Task A_fileless_book_gets_its_cover_written_and_undo_removes_the_image()
 	{
-		BookRecord template = TestBooks.Book(number: "7");
-		var fileless = new BookRecord(
-			template.Id, new BookLocation.Fileless(HasCustomCover: true), template.Caption,
-			Fields.All.Select(field => template[field]).ToArray(), new System.Collections.Generic.Dictionary<string, string>());
+		BookRecord fileless = TestBooks.Fileless(number: "7");
 		shelf.Selection.Add(fileless);
 		shelf.Library.Covers[fileless.Id] = [1, 2, 3];
 		Profile covers = shelf.Profile(edit: settings => settings with { FilelessCovers = CoverFormat.Png });
@@ -299,6 +296,38 @@ public sealed class ExecutorTests : IDisposable
 		await Assert.That(shelf.LibraryFiles()).IsEqualTo(SevenOrganized);
 		await Assert.That(shelf.PathOf(seven)).IsEqualTo(SevenOrganized);
 		await Assert.That(shelf.Library.Transfers.Single()).IsEqualTo((replaced, seven.Id));
+	}
+
+	[Test]
+	public async Task Replace_of_an_existing_cover_recycles_it_and_writes_the_new_cover()
+	{
+		const string Cover = @"Comics\Marvel\X-Men\X-Men #7.jpg";
+		BookRecord fileless = TestBooks.Fileless(number: "7");
+		shelf.Selection.Add(fileless);
+		shelf.Library.Covers[fileless.Id] = [9, 9, 9];
+		shelf.Put(Cover, "the old cover");
+		Profile covers = shelf.Profile(edit: settings => settings with { FilelessCovers = CoverFormat.Jpg });
+
+		RunReport report = shelf.Run(shelf.Plan(Decisions.None.WithDefault(new Resolution.Replace()), covers));
+
+		await Assert.That(File.ReadAllBytes(shelf.P(Cover).Value).SequenceEqual(new byte[] { 9, 9, 9 })).IsTrue();
+		await Assert.That(report.Results.Values.All(result => result is OpResult.Done)).IsTrue();
+	}
+
+	[Test]
+	public async Task Copy_replace_over_a_file_of_the_same_size_recycles_it_and_copies()
+	{
+		shelf.Add(Seven, "7");
+		shelf.Put(SevenBackup, RealShelf.ContentOf(Seven).ToUpperInvariant());
+		var existing = new BookId(Guid.NewGuid());
+		shelf.Library.Paths[existing] = shelf.P(SevenBackup);
+		Profile backup = shelf.Profile("Backup", "Backup", settings => settings with { Action = new ProfileAction.Copy(AddToLibrary: true) });
+
+		RunReport report = shelf.Run(shelf.Plan(Decisions.None.WithDefault(new Resolution.Replace()), backup));
+
+		await Assert.That(shelf.Read(SevenBackup)).IsEqualTo(RealShelf.ContentOf(Seven));
+		await Assert.That(shelf.Library.Paths.ContainsKey(existing)).IsFalse();
+		await Assert.That(report.Results.Values.All(result => result is OpResult.Done)).IsTrue();
 	}
 
 	[Test]
