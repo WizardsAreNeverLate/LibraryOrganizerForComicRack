@@ -42,7 +42,7 @@ public sealed class SettingsStore
 		var warnings = new List<string>();
 		try
 		{
-			XDocument document = XDocument.Load(Path, LoadOptions.PreserveWhitespace);
+			XDocument document = ReadXml(Path);
 			XElement? root = document.Root;
 			if (root is null || root.Name != "LibraryOrganizer")
 			{
@@ -87,7 +87,7 @@ public sealed class SettingsStore
 		XDocument document;
 		try
 		{
-			document = XDocument.Load(file);
+			document = ReadXml(file);
 		}
 		catch (Exception ex) when (ex is XmlException or IOException or UnauthorizedAccessException)
 		{
@@ -114,6 +114,9 @@ public sealed class SettingsStore
 			[.. settings.LastRunOrder.Select(id => newIds[id])],
 			warnings);
 	}
+
+	/// <summary>Keeps whitespace: a replacement or substitute that is only a space is a value, not formatting.</summary>
+	private static XDocument ReadXml(string file) => XDocument.Load(file, LoadOptions.PreserveWhitespace);
 
 	private static void WriteAtomically(string path, XDocument document)
 	{
