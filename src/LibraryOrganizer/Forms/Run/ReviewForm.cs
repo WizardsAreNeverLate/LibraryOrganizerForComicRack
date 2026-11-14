@@ -73,8 +73,8 @@ public sealed class ReviewForm : Form
 		questionPanel = BuildQuestionPanel();
 		Control filters = BuildFilterBar();
 
-		run = new Button { Text = "Run", Width = 100, UseVisualStyleBackColor = true, Enabled = false };
-		var close = new Button { Text = "Close", Width = 100, DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
+		run = new Button { Text = "Run", AutoSize = true, MinimumSize = new Size(100, 0), UseVisualStyleBackColor = true, Enabled = false };
+		var close = new Button { Text = "Close", AutoSize = true, MinimumSize = new Size(100, 0), DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
 		run.Click += (_, _) => Approve();
 		var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, AutoSize = true, Margin = new Padding(0, 6, 0, 0) };
 		buttons.Controls.AddRange([close, run, progress]);
@@ -272,8 +272,8 @@ public sealed class ReviewForm : Form
 			var button = new CheckBox
 			{
 				Appearance = Appearance.Button,
-				AutoSize = false,
-				Size = new Size(132, 26),
+				AutoSize = true,
+				MinimumSize = new Size(132, 0),
 				TextAlign = ContentAlignment.MiddleCenter,
 				Text = ReviewRows.Label(outcome),
 				Margin = new Padding(0, 0, 4, 0),
