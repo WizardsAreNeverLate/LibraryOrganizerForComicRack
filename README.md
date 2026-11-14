@@ -143,6 +143,7 @@ You need the .NET SDK 10 or later and a ComicRack CE build that has the `DotNetP
 ```
 
 `Build.ps1` builds the solution, runs the test suites, and writes
-`src\LibraryOrganizer\bin\Debug\net48\LibraryOrganizer.crplugin`. `tools\smoke\run-smoke.ps1` runs the plugin inside a
+`src\LibraryOrganizer\bin\Debug\net48\LibraryOrganizer.crplugin`. `BuildNoTests.ps1` takes the same parameters and
+skips the tests. `tools\smoke\run-smoke.ps1` runs the plugin inside a
 real ComicRack with a separate configuration. `AGENTS.md` describes the project layout and conventions, and
 `docs\design\architecture.md` describes the design.

@@ -15,7 +15,7 @@ The design is `docs/design/architecture.md`. Its **Synthesis decision** section 
 
 ```powershell
 ./Build.ps1 -ComicRackDir D:\Data\_Code\ComicRackCE\ComicRack\bin\Release\net48
-./Build.ps1 -ComicRackDir ... -SkipTests
+./BuildNoTests.ps1 -ComicRackDir ...   # the same as Build.ps1 -SkipTests
 ```
 
 - `src/LibraryOrganizer.Core` has no ComicRack or WinForms reference. `dotnet build src/LibraryOrganizer.Core` works
