@@ -37,6 +37,7 @@ internal sealed class ReportForm : Form
 		grid.Columns.Add("Result", "Result");
 		grid.Columns.Add("Detail", "Detail");
 		grid.Columns[3].FillWeight = 250;
+		grid.FitsFont();
 		foreach (ReportRow row in rows.OrderBy(r => r.Status == ReportStatus.Failed ? 0 : 1))
 		{
 			int index = grid.Rows.Add(row.Book, row.Profile, ReportRows.Text(row.Status), row.Detail);

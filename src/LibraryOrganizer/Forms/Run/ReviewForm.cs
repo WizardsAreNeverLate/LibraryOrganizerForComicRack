@@ -184,6 +184,7 @@ public sealed class ReviewForm : Form
 		grid.EnableHeadersVisualStyles = true;
 		grid.Margin = new Padding(0, 6, 0, 0);
 		grid.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+		grid.FitsFont();
 
 		DataGridViewTextBoxColumn Column(string name, string header, int width, bool fill = false)
 		{

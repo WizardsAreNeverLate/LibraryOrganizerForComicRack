@@ -37,9 +37,10 @@ The design is `docs/design/architecture.md`. Its **Synthesis decision** section 
 - Code-only WinForms. No `.resx`.
 - Buttons size to their font: `AutoSize = true` with a `MinimumSize` width, never a fixed height. A new dialog goes into
   `DialogLayoutTests`, which fails when any button is shorter than its text needs or any dropdown list is narrower than its
-  longest item.
+  longest item, or any grid row is shorter than its font.
 - Dropdown lists call `Ui.FitsItems()` once their items are in, and `Fit()` after refilling them, so display scaling never
   truncates an item.
+- Grids call `Ui.FitsFont()` so the header row and rows take their height from the font. `DialogLayoutTests` checks it.
 
 ## Formats that must not change once shipped
 

@@ -50,6 +50,7 @@ public class DialogLayoutTests
 			new QuestionKey(Fields.Writer, new AnswerScope.Series(new SeriesKey("Marvel", "X-Men", 2))), "Writer", ["Chris Claremont", "Jim Lee"], [], "X-Men #7", 1)),
 		["PathEditorDialog"] = () => new PathEditorDialog("The path is too long.", @"D:\Comics\x.cbz", 259),
 		["NameDialog"] = () => new NameDialog("New profile", "Name", "Default", _ => null),
+		["ReportForm"] = () => new LibraryOrganizer.Plugin.Forms.Execution.ReportForm("Library Organizer", new RunReport(new RunId(Guid.NewGuid()), [], new Dictionary<OpId, OpResult>(), false)),
 	};
 
 	[Test]
@@ -69,6 +70,39 @@ public class DialogLayoutTests
 		thread.Join();
 
 		await Assert.That(clipped).IsEmpty();
+	}
+
+	[Test]
+	[MethodDataSource(nameof(Dialogs))]
+	public async Task Every_grid_header_and_row_is_tall_enough_for_its_text(string dialog, float fontPoints)
+	{
+		string[] clipped = [];
+		var thread = new Thread(() =>
+		{
+			using Form form = Show(dialog, fontPoints);
+			clipped = [.. Controls(form).OfType<DataGridView>().Where(g => g.Visible).SelectMany(Clipped)];
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
+
+		await Assert.That(clipped).IsEmpty();
+	}
+
+	private static IEnumerable<string> Clipped(DataGridView grid)
+	{
+		Font headerFont = grid.ColumnHeadersDefaultCellStyle.Font ?? grid.Font;
+		Font cellFont = grid.DefaultCellStyle.Font ?? grid.Font;
+		int headerNeeds = TextRenderer.MeasureText("Book", headerFont).Height + 6;
+		int rowNeeds = TextRenderer.MeasureText("Book", cellFont).Height + 4;
+		if (grid.ColumnHeadersVisible && grid.ColumnHeadersHeight < headerNeeds)
+		{
+			yield return $"headers {grid.ColumnHeadersHeight}<{headerNeeds}";
+		}
+		if (grid.RowTemplate.Height < rowNeeds)
+		{
+			yield return $"rows {grid.RowTemplate.Height}<{rowNeeds}";
+		}
 	}
 
 	[Test]

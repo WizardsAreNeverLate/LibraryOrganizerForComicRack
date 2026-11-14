@@ -37,6 +37,32 @@ internal static class Ui
 		combo.Width = Math.Max(combo.MinimumSize.Width, longest + SystemInformation.VerticalScrollBarWidth + 8);
 	}
 
+	/// <summary>
+	/// Sizes the header row and the rows to the grid's font, now and whenever the font changes. The default heights are
+	/// fixed pixels, so display scaling cuts off the bottom of the text.
+	/// </summary>
+	public static DataGridView FitsFont(this DataGridView grid)
+	{
+		grid.FontChanged += (_, _) => FitRows(grid);
+		FitRows(grid);
+		return grid;
+	}
+
+	private static void FitRows(DataGridView grid)
+	{
+		int text = TextRenderer.MeasureText("Ag", grid.Font).Height;
+		grid.ColumnHeadersHeight = Math.Max(grid.ColumnHeadersHeight, text + 8);
+		int row = TextRenderer.MeasureText("Ag", grid.Font).Height + 6;
+		grid.RowTemplate.Height = row;
+		if (!grid.VirtualMode)
+		{
+			foreach (DataGridViewRow existing in grid.Rows)
+			{
+				existing.Height = row;
+			}
+		}
+	}
+
 	public static Button Button(string text, EventHandler onClick)
 	{
 		var button = new Button { Text = text, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, Padding = new Padding(8, 1, 8, 1), Margin = new Padding(0, 0, 6, 0), UseVisualStyleBackColor = true };
