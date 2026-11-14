@@ -25,6 +25,7 @@ public sealed class Probe : DotNetPlugin, IStartup
 	private Form main = null!;
 	private int historyOpened;
 	private int reviews;
+	private int configsOpened;
 
 	public override string Key { get; set; } = "lo-smoke";
 
@@ -97,6 +98,13 @@ public sealed class Probe : DotNetPlugin, IStartup
 
 		Check("quick moved both files again without a review", File.Exists(firstTarget) && File.Exists(seventhTarget) && reviews == reviewsBefore, $"reviews shown: {reviews - reviewsBefore}");
 		Check("organize, undo and quick each wrote a journal", Directory.GetFiles(runs, "*.journal").Length == 3, runs);
+
+		ToolStripSplitButton[] buttons = [.. Controls(main).OfType<ToolStrip>().SelectMany(strip => strip.Items.OfType<ToolStripSplitButton>()).Where(b => b.Text == "Library Organizer")];
+		Check("the book list toolbar has a Library Organizer split button with an image", buttons.Length > 0 && buttons.All(b => b.Image is { Width: 16, Height: 16 }), $"buttons: {buttons.Length}");
+		ToolStripItem? configure = buttons.FirstOrDefault()?.DropDownItems.Cast<ToolStripItem>().FirstOrDefault(item => item.Text.StartsWith("Configure"));
+		Check("its dropdown offers Configure", configure is not null, string.Join(", ", buttons.FirstOrDefault()?.DropDownItems.Cast<ToolStripItem>().Select(item => item.Text) ?? []));
+		configure?.PerformClick();
+		Check("Configure from the toolbar opened the settings dialog", configsOpened == 1, configsOpened.ToString());
 	}
 
 	private ComicBook AddBook(string path, string number, int year, int month)
@@ -140,6 +148,12 @@ public sealed class Probe : DotNetPlugin, IStartup
 						reviews++;
 						Click(form, "Run");
 					}
+					break;
+				case "ConfigForm":
+					handled.Add(form);
+					configsOpened++;
+					seen.Add("config");
+					form.BeginInvoke(new Action(form.Close));
 					break;
 				case "RunWindow":
 					break;

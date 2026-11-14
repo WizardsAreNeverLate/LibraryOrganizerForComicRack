@@ -15,7 +15,7 @@ namespace LibraryOrganizer.LoadTests;
 public class PluginLoadTests
 {
 	[Test]
-	public async Task ComicRack_registers_the_commands_of_the_installed_crplugin()
+	public async Task ComicRack_registers_the_commands_and_one_toolbar_split_button_from_the_installed_crplugin()
 	{
 		string scripts = Path.Combine(Path.GetTempPath(), "lo-load-" + Guid.NewGuid().ToString("N"));
 		ZipFile.ExtractToDirectory(CrPlugin(), Path.Combine(scripts, "Library Organizer"));
@@ -27,6 +27,10 @@ public class PluginLoadTests
 			string[] commands = [.. engine.GetAllCommands().Where(c => c.Key.StartsWith("library-organizer-net")).Select(c => $"{c.Key}:{c.Hook}:{(c.Configure is null ? "" : "configure")}").OrderBy(s => s)];
 
 			await Assert.That(commands).IsEquivalentTo(ExpectedCommands);
+
+			Command[] toolbar = [.. engine.GetCommands("Books").Where(c => c.Key.StartsWith("library-organizer-net") && c.Image != null && c.Configure != null)];
+			await Assert.That(toolbar.Select(c => c.Key)).IsEquivalentTo(new[] { "library-organizer-net" });
+			await Assert.That(toolbar[0].CommandImage?.Size).IsEqualTo(new System.Drawing.Size(16, 16));
 		}
 		finally
 		{
@@ -57,7 +61,7 @@ public class PluginLoadTests
 		public IBrowser Browser => null!;
 		public IComicDisplay ComicDisplay => null!;
 		public string CommandPath { get; set; } = "";
-		public IThemePlugin Theme { get; set; } = null!;
+		public IThemePlugin Theme { get; set; } = ThemePlugin.Default;
 		public IEnumerable<string> LibraryPaths => [];
 		public string Localize(string resourceKey, string elementKey, string text) => text;
 		public object Clone() => MemberwiseClone();

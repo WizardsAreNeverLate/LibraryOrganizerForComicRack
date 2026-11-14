@@ -38,6 +38,9 @@ touch that folder.
      (adds ` (1)` to the name), or type another path. **For all conflicts** sets one answer for every conflict.
 5. Click **Run**. To change nothing, click **Close**. Closing the review is the old Simulate mode.
 
+The book list toolbar has a **Library Organizer** button (the bookcase icon). Click it to organize the selected books.
+Click its arrow, or right-click it, and choose **Configure...** to open the settings.
+
 **Library Organizer (Quick)** skips the review when no book needs an answer, no target is taken, and no book failed.
 
 The first time you open the plugin, it looks for Library Organizer 2.x settings in ComicRack's Scripts folder and
@@ -126,6 +129,10 @@ These are not built yet:
 - There is no command that organizes the whole library when ComicRack starts.
 - Multi-value answers, including "remember this choice", are not saved. They last until ComicRack closes.
 - Export writes the new settings format only, not `.lop` files.
+
+## Credits
+
+The bookcase icon is by David Vignoni, released under the LGPL. It comes from Library Organizer 2.x.
 
 ## Build from source
 

@@ -23,6 +23,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="Package\**\*" />
+		<EmbeddedResource Include="Resources\libraryorganizer.png" LogicalName="libraryorganizer.png" />
 	</ItemGroup>
 	<Target Name="PackCrPlugin" AfterTargets="Build">
 		<PropertyGroup>
