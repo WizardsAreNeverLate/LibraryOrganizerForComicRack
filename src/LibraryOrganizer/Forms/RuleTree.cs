@@ -91,6 +91,9 @@ internal sealed class ConditionNode : RuleNode
 		fieldBox.Items.AddRange([.. RuleFields]);
 		fieldBox.Format += (_, e) => e.Value = e.Value is Field f ? f.DisplayName : e.Value;
 		operatorBox.Format += (_, e) => e.Value = e.Value is Operator op ? Operators.Describe(op) : e.Value;
+		fieldBox.FitsItems();
+		operatorBox.FitsItems();
+		valueChoice.FitsItems();
 
 		loading++;
 		fieldBox.SelectedItem = field is not null && field.Uses.HasFlag(FieldUses.Rule) ? field : fieldBox.Items[0];
@@ -171,6 +174,7 @@ internal sealed class ConditionNode : RuleNode
 		{
 			operatorBox.Items.Add(op);
 		}
+		operatorBox.Fit();
 		if (prefer is { } wanted && operators.Contains(wanted))
 		{
 			operatorBox.SelectedItem = wanted;
@@ -196,6 +200,7 @@ internal sealed class ConditionNode : RuleNode
 			{
 				valueChoice.Items.Add(YesRightToLeftWord);
 			}
+			valueChoice.Fit();
 		}
 	}
 
@@ -256,6 +261,7 @@ internal sealed class GroupNode : RuleNode
 	public GroupNode(Combinator initial, IEnumerable<RuleSettings> initialChildren, bool isRoot)
 	{
 		combinator.Items.AddRange(["Any", "All"]);
+		combinator.FitsItems();
 		combinator.SelectedIndex = initial == Combinator.All ? 1 : 0;
 		combinator.SelectedIndexChanged += (_, _) => RaiseEdited();
 

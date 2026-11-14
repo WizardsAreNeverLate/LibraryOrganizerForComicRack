@@ -64,6 +64,7 @@ internal sealed class GeneralTab : ProfileEditor
 		{
 			filelessCovers.Items.Add(text);
 		}
+		filelessCovers.FitsItems();
 		move.CheckedChanged += (_, _) => Changed();
 		useFolder.CheckedChanged += (_, _) => Changed();
 		copy.CheckedChanged += (_, _) => Changed();

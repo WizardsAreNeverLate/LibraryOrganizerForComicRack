@@ -36,7 +36,10 @@ The design is `docs/design/architecture.md`. Its **Synthesis decision** section 
   Derive expected values from the requirement (the Python docs or the design), not from a run of the code.
 - Code-only WinForms. No `.resx`.
 - Buttons size to their font: `AutoSize = true` with a `MinimumSize` width, never a fixed height. A new dialog goes into
-  `DialogLayoutTests`, which fails when any button is shorter than its text needs.
+  `DialogLayoutTests`, which fails when any button is shorter than its text needs or any dropdown list is narrower than its
+  longest item.
+- Dropdown lists call `Ui.FitsItems()` once their items are in, and `Fit()` after refilling them, so display scaling never
+  truncates an item.
 
 ## Formats that must not change once shipped
 

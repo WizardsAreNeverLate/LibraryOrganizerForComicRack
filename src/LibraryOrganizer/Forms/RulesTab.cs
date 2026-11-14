@@ -18,6 +18,8 @@ internal sealed class RulesTab : ProfileEditor
 		Padding = new Padding(12);
 		mode.Items.AddRange(["Only", "Do not"]);
 		match.Items.AddRange(["Any", "All"]);
+		mode.FitsItems();
+		match.FitsItems();
 
 		var sentence = Ui.Row(mode, Ui.Label("organize books that match"), match, Ui.Label("of these rules"));
 		var buttons = Ui.Row(Ui.Button("Add rule", (_, _) => root.AddCondition()), Ui.Button("Add group", (_, _) => root.AddGroup()));

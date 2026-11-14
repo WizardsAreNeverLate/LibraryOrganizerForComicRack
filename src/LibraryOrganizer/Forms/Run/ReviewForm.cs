@@ -293,6 +293,7 @@ public sealed class ReviewForm : Form
 		second.Controls.Add(search);
 		second.Controls.Add(new Label { Text = "For all conflicts:", AutoSize = true, Margin = new Padding(12, 6, 4, 0) });
 		defaultChoice.Items.AddRange(["Ask for each", "Skip", "Replace", "Keep both"]);
+		defaultChoice.FitsItems();
 		defaultChoice.SelectedIndexChanged += (_, _) =>
 		{
 			if (!syncing)

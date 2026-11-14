@@ -14,6 +14,29 @@ internal static class Ui
 	public static Label Hint(string text)
 		=> new() { Text = text, AutoSize = true, ForeColor = SystemColors.GrayText, Margin = new Padding(0, 2, 0, 6), MaximumSize = new Size(640, 0) };
 
+	/// <summary>
+	/// Grows the list to its longest item in its own font, keeping its current width as a minimum. A fixed pixel width
+	/// truncates items under display scaling, where the font grows and the width does not. Call <see cref="Fit"/> again
+	/// after replacing the items.
+	/// </summary>
+	public static ComboBox FitsItems(this ComboBox combo)
+	{
+		combo.MinimumSize = new Size(combo.Width, 0);
+		combo.FontChanged += (_, _) => combo.Fit();
+		combo.Fit();
+		return combo;
+	}
+
+	public static void Fit(this ComboBox combo)
+	{
+		int longest = 0;
+		foreach (object item in combo.Items)
+		{
+			longest = Math.Max(longest, TextRenderer.MeasureText(combo.GetItemText(item), combo.Font).Width);
+		}
+		combo.Width = Math.Max(combo.MinimumSize.Width, longest + SystemInformation.VerticalScrollBarWidth + 8);
+	}
+
 	public static Button Button(string text, EventHandler onClick)
 	{
 		var button = new Button { Text = text, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, Padding = new Padding(8, 1, 8, 1), Margin = new Padding(0, 0, 6, 0), UseVisualStyleBackColor = true };
@@ -113,16 +136,18 @@ internal sealed class NameDialog : Form
 		ShowInTaskbar = false;
 		AutoScaleMode = AutoScaleMode.Font;
 		ClientSize = new Size(380, 130);
+		AutoSize = true;
+		AutoSizeMode = AutoSizeMode.GrowOnly;
 		var ok = new Button { Text = "OK", AutoSize = true, MinimumSize = new Size(75, 0), DialogResult = DialogResult.None, UseVisualStyleBackColor = true };
 		var cancel = new Button { Text = "Cancel", AutoSize = true, MinimumSize = new Size(75, 0), DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
 		ok.Click += (_, _) => Accept();
-		var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft };
+		var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, AutoSize = true };
 		buttons.Controls.AddRange([cancel, ok]);
-		var table = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 4, Padding = new Padding(12) };
+		var table = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 4, Padding = new Padding(12), AutoSize = true };
 		table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 		table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 		table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-		table.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+		table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 		table.Controls.Add(Ui.Label(prompt), 0, 0);
 		table.Controls.Add(box, 0, 1);
 		table.Controls.Add(problem, 0, 2);

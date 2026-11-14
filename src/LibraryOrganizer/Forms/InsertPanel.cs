@@ -185,6 +185,7 @@ internal sealed class InsertPanel : TableLayoutPanel
 	{
 		var combo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Left, Width = 230, Margin = new Padding(0, 2, 0, 2) };
 		combo.Items.AddRange([.. items]);
+		combo.FitsItems();
 		if (selected >= 0)
 		{
 			combo.SelectedIndex = selected;
