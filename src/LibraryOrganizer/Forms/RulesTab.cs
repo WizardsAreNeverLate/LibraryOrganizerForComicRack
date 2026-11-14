@@ -6,7 +6,7 @@ namespace LibraryOrganizer.Plugin.Forms;
 
 internal sealed class RulesTab : ProfileEditor
 {
-	private readonly ComboBox mode = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 90, Margin = new Padding(0, 1, 6, 1) };
+	private readonly ComboBox mode = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 117, Margin = new Padding(0, 1, 6, 1) };
 	private readonly ComboBox match = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 60, Margin = new Padding(0, 1, 6, 1) };
 	private readonly GroupNode root = new(Combinator.Any, [], isRoot: true);
 	private readonly Label empty = Ui.Hint("");

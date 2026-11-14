@@ -113,8 +113,8 @@ internal sealed class NameDialog : Form
 		ShowInTaskbar = false;
 		AutoScaleMode = AutoScaleMode.Font;
 		ClientSize = new Size(380, 130);
-		var ok = new Button { Text = "OK", DialogResult = DialogResult.None, UseVisualStyleBackColor = true };
-		var cancel = new Button { Text = "Cancel", DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
+		var ok = new Button { Text = "OK", AutoSize = true, MinimumSize = new Size(75, 0), DialogResult = DialogResult.None, UseVisualStyleBackColor = true };
+		var cancel = new Button { Text = "Cancel", AutoSize = true, MinimumSize = new Size(75, 0), DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
 		ok.Click += (_, _) => Accept();
 		var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft };
 		buttons.Controls.AddRange([cancel, ok]);

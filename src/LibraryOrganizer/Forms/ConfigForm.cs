@@ -73,8 +73,8 @@ public sealed class ConfigForm : Form
 		problemPanel.Controls.Add(problemTitle, 0, 0);
 		problemPanel.Controls.Add(problemList, 0, 1);
 
-		var ok = new Button { Text = "OK", Width = 90, UseVisualStyleBackColor = true };
-		var cancel = new Button { Text = "Cancel", Width = 90, DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
+		var ok = new Button { Text = "OK", AutoSize = true, MinimumSize = new Size(90, 0), UseVisualStyleBackColor = true };
+		var cancel = new Button { Text = "Cancel", AutoSize = true, MinimumSize = new Size(90, 0), DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
 		ok.Click += (_, _) => Accept();
 		var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, AutoSize = true, Margin = new Padding(0, 8, 0, 0) };
 		buttons.Controls.AddRange([cancel, ok]);
@@ -178,8 +178,6 @@ public sealed class ConfigForm : Form
 		foreach (Button button in commands)
 		{
 			button.Dock = DockStyle.Top;
-			button.AutoSize = false;
-			button.Height = 28;
 			button.Margin = new Padding(0, 0, 0, 4);
 			panel.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 			panel.Controls.Add(button, 0, panel.RowCount++);

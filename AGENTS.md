@@ -35,6 +35,8 @@ The design is `docs/design/architecture.md`. Its **Synthesis decision** section 
 - Tests use TUnit and assert behavior a caller can see: rendered paths, plan entries, files on disk, journal contents.
   Derive expected values from the requirement (the Python docs or the design), not from a run of the code.
 - Code-only WinForms. No `.resx`.
+- Buttons size to their font: `AutoSize = true` with a `MinimumSize` width, never a fixed height. A new dialog goes into
+  `DialogLayoutTests`, which fails when any button is shorter than its text needs.
 
 ## Formats that must not change once shipped
 

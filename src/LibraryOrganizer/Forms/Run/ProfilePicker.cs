@@ -19,7 +19,7 @@ public sealed class ProfilePicker : Form
 
 	private readonly ListBox available = new() { Dock = DockStyle.Fill, IntegralHeight = false, SelectionMode = SelectionMode.MultiExtended };
 	private readonly ListBox order = new() { Dock = DockStyle.Fill, IntegralHeight = false, SelectionMode = SelectionMode.MultiExtended };
-	private readonly Button ok = new() { Text = "OK", Width = 90, UseVisualStyleBackColor = true };
+	private readonly Button ok = new() { Text = "OK", AutoSize = true, MinimumSize = new Size(90, 0), UseVisualStyleBackColor = true };
 
 	public ProfilePicker(IReadOnlyList<ProfileSettings> profiles, IReadOnlyList<ProfileId> lastRunOrder)
 	{
@@ -38,7 +38,7 @@ public sealed class ProfilePicker : Form
 		ClientSize = new Size(640, 400);
 		MinimumSize = new Size(560, 340);
 
-		var cancel = new Button { Text = "Cancel", Width = 90, DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
+		var cancel = new Button { Text = "Cancel", AutoSize = true, MinimumSize = new Size(90, 0), DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
 		ok.Click += (_, _) => Accept();
 		var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, AutoSize = true, Margin = new Padding(0, 8, 0, 0) };
 		buttons.Controls.AddRange([cancel, ok]);
@@ -53,8 +53,7 @@ public sealed class ProfilePicker : Form
 		foreach (Control button in moves.Controls)
 		{
 			button.Margin = new Padding(0, 0, 0, 6);
-			button.AutoSize = false;
-			button.Size = new Size(96, 28);
+			button.MinimumSize = new Size(96, 0);
 		}
 		available.DoubleClick += (_, _) => Transfer(available, order);
 		order.DoubleClick += (_, _) => Transfer(order, available);

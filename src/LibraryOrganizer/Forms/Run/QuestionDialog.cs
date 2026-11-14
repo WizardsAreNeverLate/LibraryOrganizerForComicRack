@@ -58,8 +58,7 @@ public sealed class QuestionDialog : Form
 		foreach (Control button in moves.Controls)
 		{
 			button.Margin = new Padding(0, 0, 0, 6);
-			button.AutoSize = false;
-			button.Size = new Size(96, 28);
+			button.MinimumSize = new Size(96, 0);
 		}
 		available.DoubleClick += (_, _) => Add();
 		selected.DoubleClick += (_, _) => Remove();
@@ -89,8 +88,8 @@ public sealed class QuestionDialog : Form
 		options.Controls.Add(asFolders);
 		options.Controls.Add(Ui.Hint("Selecting nothing writes nothing for this field."));
 
-		var ok = new Button { Text = "OK", Width = 90, UseVisualStyleBackColor = true };
-		var cancel = new Button { Text = "Cancel", Width = 90, DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
+		var ok = new Button { Text = "OK", AutoSize = true, MinimumSize = new Size(90, 0), UseVisualStyleBackColor = true };
+		var cancel = new Button { Text = "Cancel", AutoSize = true, MinimumSize = new Size(90, 0), DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
 		ok.Click += (_, _) => Accept();
 		var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, AutoSize = true, Margin = new Padding(0, 8, 0, 0) };
 		buttons.Controls.AddRange([cancel, ok]);

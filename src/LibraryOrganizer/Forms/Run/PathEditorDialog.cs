@@ -11,7 +11,7 @@ internal sealed class PathEditorDialog : Form
 	private readonly TextBox box = new() { Dock = DockStyle.Fill, Margin = new Padding(0, 4, 0, 4) };
 	private readonly Label length = new() { AutoSize = true, ForeColor = SystemColors.GrayText, Margin = new Padding(0, 0, 0, 2) };
 	private readonly Label problem = new() { AutoSize = true, ForeColor = Ui.ErrorColor, MaximumSize = new Size(560, 0), Margin = new Padding(0, 0, 0, 4) };
-	private readonly Button ok = new() { Text = "OK", Width = 90, UseVisualStyleBackColor = true };
+	private readonly Button ok = new() { Text = "OK", AutoSize = true, MinimumSize = new Size(90, 0), UseVisualStyleBackColor = true };
 
 	public PathEditorDialog(string reason, string initial, int maxLength)
 	{
@@ -26,7 +26,7 @@ internal sealed class PathEditorDialog : Form
 		ShowInTaskbar = false;
 		ClientSize = new Size(600, 190);
 
-		var cancel = new Button { Text = "Cancel", Width = 90, DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
+		var cancel = new Button { Text = "Cancel", AutoSize = true, MinimumSize = new Size(90, 0), DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
 		ok.Click += (_, _) => DialogResult = DialogResult.OK;
 		var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft };
 		buttons.Controls.AddRange([cancel, ok]);
