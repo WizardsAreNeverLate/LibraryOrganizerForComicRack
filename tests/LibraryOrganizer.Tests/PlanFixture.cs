@@ -122,7 +122,7 @@ internal static class PlanExtensions
 	/// <summary>One line per operation in execution order, with full paths.</summary>
 	public static string Script(this IEnumerable<Operation> operations) => string.Join("\n", operations.Select(operation => operation switch
 	{
-		Operation.MoveFile move => $"move {move.From} -> {move.To}",
+		Operation.MoveFile move => $"{(move.Sidecar ? "sidecar" : "move")} {move.From} -> {move.To}",
 		Operation.RenameCase rename => $"case {rename.From} -> {rename.To}",
 		Operation.CopyFile copy => $"copy {copy.From} -> {copy.To}{(copy.AddToLibrary ? " +library" : "")}",
 		Operation.WriteCover cover => $"cover {cover.To} as {cover.Format}",

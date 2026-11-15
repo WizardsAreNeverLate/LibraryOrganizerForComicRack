@@ -195,6 +195,7 @@ internal sealed class Planner
 	{
 		AbsPath? source = (slot.Book.Location as BookLocation.File)?.Path;
 		AbsPath target = slot.Target!.Value;
+		IReadOnlyList<Sidecar> sidecars = SidecarsOf(slot);
 		var tried = new HashSet<AbsPath>();
 		while (true)
 		{
@@ -212,11 +213,21 @@ internal sealed class Planner
 				return;
 			}
 
+			AbsPath[] sidecarTargets = [.. sidecars.Select(sidecar => sidecar.TargetFor(target))];
 			(ConflictKind? kind, bool canReplace) = FindConflict(book, target);
+			for (int i = 0; kind is null && i < sidecarTargets.Length; i++)
+			{
+				(ConflictKind? xmlKind, _) = FindConflict(book, sidecarTargets[i]);
+				(kind, canReplace) = xmlKind switch
+				{
+					null => (null, false),
+					ConflictKind.PathTooLong => (xmlKind, false),
+					_ => (new ConflictKind.SidecarTaken(sidecarTargets[i]), xmlKind is ConflictKind.TargetExists),
+				};
+			}
 			if (kind is null)
 			{
-				slot.Operations.Add(Operation(slot, target));
-				Claim(target, slot);
+				AddMove(slot, target, sidecars);
 				return;
 			}
 
@@ -230,8 +241,9 @@ internal sealed class Planner
 				allowed.Add(ResolutionChoice.KeepBoth);
 			}
 			allowed.Add(ResolutionChoice.UsePath);
+			bool Taken(AbsPath candidate) => claims.ContainsKey(candidate) || input.Disk.FileExists(candidate);
 			AbsPath? keepBothPath = allowed.Contains(ResolutionChoice.KeepBoth)
-				? FreeName(target, candidate => claims.ContainsKey(candidate) || input.Disk.FileExists(candidate))
+				? FreeName(target, candidate => Taken(candidate) || sidecars.Any(sidecar => Taken(sidecar.TargetFor(candidate))))
 				: null;
 
 			bool Usable(Resolution? resolution)
@@ -255,11 +267,17 @@ internal sealed class Planner
 					slot.Outcome = new EntryOutcome.Skipped($"{kind.Describe()}: {target}");
 					return;
 				case Resolution.Replace:
-					BookId? existing = (kind as ConflictKind.TargetExists)?.ExistingBook;
-					bool transfer = existing is not null && slot.Profile.KeepReadProgressOnReplace && slot.Profile.Action is ProfileAction.Move;
-					slot.Operations.Add(new Operation.RecycleFile(default, slot.Key, target, existing, transfer ? slot.Key.Book : null));
-					slot.Operations.Add(Operation(slot, target));
-					Claim(target, slot);
+					if (kind is ConflictKind.TargetExists exists)
+					{
+						BookId? existing = exists.ExistingBook;
+						bool transfer = existing is not null && slot.Profile.KeepReadProgressOnReplace && slot.Profile.Action is ProfileAction.Move;
+						slot.Operations.Add(new Operation.RecycleFile(default, slot.Key, target, existing, transfer ? slot.Key.Book : null));
+					}
+					foreach (AbsPath oldXml in sidecarTargets.Where(path => input.Disk.FileExists(path) && !claims.ContainsKey(path)))
+					{
+						slot.Operations.Add(new Operation.RecycleFile(default, slot.Key, oldXml, null, null));
+					}
+					AddMove(slot, target, sidecars);
 					return;
 				case Resolution.KeepBoth:
 					tried.Add(target);
@@ -272,6 +290,59 @@ internal sealed class Planner
 			}
 		}
 	}
+
+	private void AddMove(Slot slot, AbsPath target, IReadOnlyList<Sidecar> sidecars)
+	{
+		slot.Operations.Add(Operation(slot, target));
+		Claim(target, slot);
+		foreach (Sidecar sidecar in sidecars)
+		{
+			AbsPath sidecarTarget = sidecar.TargetFor(target);
+			if (!sidecarTarget.Equals(sidecar.From))
+			{
+				slot.Operations.Add(new Operation.MoveFile(default, slot.Key, sidecar.From, sidecarTarget, Sidecar: true));
+				Claim(sidecarTarget, slot);
+			}
+		}
+	}
+
+	/// <param name="FullName">Named after the whole file name, "x.pdf.xml", rather than "x.xml".</param>
+	private sealed record Sidecar(AbsPath From, bool FullName)
+	{
+		/// <summary>The sidecar's name for a book moved to <paramref name="bookTarget"/>, in the same form as now.</summary>
+		public AbsPath TargetFor(AbsPath bookTarget)
+			=> bookTarget.Parent.Combine((FullName ? bookTarget.Name : Stem(bookTarget)) + From.Extension);
+	}
+
+	/// <summary>
+	/// The xml files next to a book that a Move profile moves: "x.pdf.xml", and "x.xml" unless another file shares the
+	/// name "x", as "x.cbz" and "x.pdf" beside one "x.xml", where it could be either one's and so stays where it is.
+	/// </summary>
+	private IReadOnlyList<Sidecar> SidecarsOf(Slot slot)
+	{
+		if (slot.Profile.Action is not ProfileAction.Move || slot.Book.Location is not BookLocation.File { Path: var book }
+			|| IsXml(book))
+		{
+			return [];
+		}
+		IReadOnlyList<AbsPath> beside = input.Disk.Children(book.Parent);
+		var sidecars = new List<Sidecar>();
+		if (beside.Where(path => IsXml(path) && Stem(path).Equals(book.Name, StringComparison.OrdinalIgnoreCase)).Select(path => (AbsPath?)path).FirstOrDefault() is AbsPath full)
+		{
+			sidecars.Add(new Sidecar(full, FullName: true));
+		}
+		string stem = Stem(book);
+		AbsPath[] sameStem = [.. beside.Where(path => !path.Equals(book) && Stem(path).Equals(stem, StringComparison.OrdinalIgnoreCase))];
+		if (sameStem.Length == 1 && IsXml(sameStem[0]))
+		{
+			sidecars.Add(new Sidecar(sameStem[0], FullName: false));
+		}
+		return sidecars;
+	}
+
+	private static bool IsXml(AbsPath path) => path.Extension.Equals(".xml", StringComparison.OrdinalIgnoreCase);
+
+	private static string Stem(AbsPath path) => path.Name.Substring(0, path.Name.Length - path.Extension.Length);
 
 	private void Claim(AbsPath target, Slot slot)
 	{

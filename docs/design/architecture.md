@@ -315,3 +315,11 @@ The sketch is in `sketch/`. `Fields.cs`, `Books.cs`, `Templates.cs`, `Rules.cs`,
 ## Next implementation step
 
 Write the field registry and `Template.Parse` with the test vectors from `07-rebuild-guide.md` as the first TUnit tests, because every other module reads both.
+
+**Sidecar files.** A Move profile moves the xml files next to a book along with it, renamed to the book's new name in
+the form each has: "x.xml" (the name without its extension) and "x.pdf.xml" (the full name). It is a `MoveFile` with `Sidecar: true`: the executor, resume and undo treat it as
+any move, but it never changes the library, and undo's library-owner check skips it. The journal writes it as kind
+`sidecar` (added before the format shipped; older journals have none). The planner plans the pair as one: a taken
+sidecar name is a `SidecarTaken` conflict on the book, Keep both picks a number free for both files, and Replace also
+recycles the xml at the target. An "x.xml" that two files share by name ("x.cbz" and "x.pdf") stays put; an "x.pdf.xml" always follows its book. Copies and case-only renames do not
+take the xml.

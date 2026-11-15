@@ -273,7 +273,7 @@ internal static class JournalFormat
 		switch (operation)
 		{
 			case Operation.MoveFile move:
-				AddEntry("move");
+				AddEntry(move.Sidecar ? "sidecar" : "move");
 				Add("from", move.From.Value);
 				Add("to", move.To.Value);
 				break;
@@ -445,6 +445,7 @@ internal static class JournalFormat
 		return Text(line, "kind") switch
 		{
 			"move" => new Operation.MoveFile(id, KeyOf(line), PathOf(line, "from"), PathOf(line, "to")),
+			"sidecar" => new Operation.MoveFile(id, KeyOf(line), PathOf(line, "from"), PathOf(line, "to"), Sidecar: true),
 			"case" => new Operation.RenameCase(id, KeyOf(line), PathOf(line, "from"), PathOf(line, "to")),
 			"copy" => new Operation.CopyFile(id, KeyOf(line), PathOf(line, "from"), PathOf(line, "to"), Bool(line, "library")),
 			"cover" => new Operation.WriteCover(

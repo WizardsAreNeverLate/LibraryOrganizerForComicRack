@@ -41,6 +41,11 @@ touch that folder.
 The book list toolbar has a **Library Organizer** button (the bookcase icon). Click it to organize the selected books.
 Click its arrow, or right-click it, and choose **Configure...** to open the settings.
 
+A sidecar XML moves and is renamed with its comic, in the form it has: when `comic1.pdf` becomes `X-Men #7.pdf`,
+`comic1.xml` beside it becomes `X-Men #7.xml` and `comic1.pdf.xml` becomes `X-Men #7.pdf.xml`. If a new XML name is
+taken, the review shows a conflict. If two files share the name `comic1`, as `comic1.cbz` and `comic1.pdf`, a
+`comic1.xml` could belong to either, so it stays where it is. Copies do not take the XML.
+
 **Library Organizer (Quick)** skips the review when no book needs an answer, no target is taken, and no book failed.
 
 The first time you open the plugin, it looks for Library Organizer 2.x settings in ComicRack's Scripts folder and

@@ -124,8 +124,11 @@ public abstract record Operation
 	/// <summary>The plan entry this operation belongs to; default for the run-level <see cref="PruneFolders"/>.</summary>
 	public abstract EntryKey Entry { get; init; }
 
-	/// <summary>The file moves and the library book's path follows. The target folder is created.</summary>
-	public sealed record MoveFile(OpId Id, EntryKey Entry, AbsPath From, AbsPath To) : Operation;
+	/// <summary>
+	/// The file moves and the library book's path follows. The target folder is created. A sidecar is the xml beside a book,
+	/// which moves and is renamed with it; the library does not change for it.
+	/// </summary>
+	public sealed record MoveFile(OpId Id, EntryKey Entry, AbsPath From, AbsPath To, bool Sidecar = false) : Operation;
 
 	/// <summary>A change of spelling only, done through a temporary name: CE's ComicBook.RenameFile ignores it.</summary>
 	public sealed record RenameCase(OpId Id, EntryKey Entry, AbsPath From, AbsPath To) : Operation
@@ -185,7 +188,7 @@ public abstract record Operation
 	/// <param name="createdBook">The library book a copy created. The undo removes it with the copied file.</param>
 	public Operation? Inverse(OpId id, BookId? createdBook = null) => this switch
 	{
-		MoveFile move => new MoveFile(id, Entry, move.To, move.From),
+		MoveFile move => new MoveFile(id, Entry, move.To, move.From, move.Sidecar),
 		RenameCase rename => new RenameCase(id, Entry, rename.To, rename.From),
 		CopyFile copy => new RecycleFile(id, Entry, copy.To, createdBook, null),
 		WriteCover cover => new RecycleFile(id, Entry, cover.To, null, null),
@@ -207,11 +210,15 @@ public abstract record ConflictKind
 
 	public sealed record PathTooLong(int Length, int Max) : ConflictKind;
 
+	/// <summary>The name the book's sidecar xml would get is taken on the disk or by another file in this run.</summary>
+	public sealed record SidecarTaken(AbsPath Sidecar) : ConflictKind;
+
 	public string Describe() => this switch
 	{
 		TargetExists => "A file already exists",
 		SameTargetAs => "Another book in this run goes to the same path",
 		PathTooLong tooLong => $"The path has {tooLong.Length} characters, and the limit is {tooLong.Max}",
+		SidecarTaken sidecar => $"The new name of the book's sidecar, {sidecar.Sidecar.Name}, is taken",
 		_ => "",
 	};
 }

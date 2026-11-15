@@ -211,7 +211,7 @@ public sealed class Executor
 	{
 		switch (operation)
 		{
-			case Operation.MoveFile move:
+			case Operation.MoveFile { Sidecar: false } move:
 				library.FileMoved(move.Entry.Book, move.To);
 				break;
 			case Operation.RenameCase rename:

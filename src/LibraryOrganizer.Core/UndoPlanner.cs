@@ -114,7 +114,7 @@ internal static class UndoPlanner
 	/// <summary>Where the operation left the book's own file. A copy or a cover is a new file, so it has none.</summary>
 	private static AbsPath? BookFileAt(Operation operation) => operation switch
 	{
-		Operation.MoveFile move => move.To,
+		Operation.MoveFile { Sidecar: false } move => move.To,
 		Operation.RenameCase rename => rename.To,
 		_ => null,
 	};
