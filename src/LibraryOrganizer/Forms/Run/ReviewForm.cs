@@ -30,8 +30,8 @@ public sealed class ReviewForm : Form
 	private readonly Timer searchDelay = new() { Interval = 250 };
 	private readonly ComboBox defaultChoice = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 130, Margin = new Padding(0, 2, 0, 0) };
 	private readonly Label shown = new() { AutoSize = false, Size = new Size(140, 20), ForeColor = SystemColors.GrayText, Margin = new Padding(12, 6, 0, 0) };
-	private readonly Label summary = new() { Dock = DockStyle.Fill, AutoEllipsis = true, Margin = new Padding(0, 6, 0, 0) };
-	private readonly Label blockers = new() { Dock = DockStyle.Fill, AutoEllipsis = true, ForeColor = Attention };
+	private readonly Label summary = new() { Dock = DockStyle.Fill, AutoSize = true, Margin = new Padding(0, 6, 0, 0) };
+	private readonly Label blockers = new() { Dock = DockStyle.Fill, AutoSize = true, ForeColor = Attention };
 	private readonly ProgressBar progress = new() { Style = ProgressBarStyle.Marquee, Width = 120, Height = 14, Visible = false, Margin = new Padding(0, 8, 8, 0) };
 	private readonly ListBox questionList = new() { Dock = DockStyle.Fill, IntegralHeight = false, Height = 56, FormattingEnabled = true };
 	private readonly Button answer;
@@ -80,9 +80,9 @@ public sealed class ReviewForm : Form
 		buttons.Controls.AddRange([close, run, progress]);
 		CancelButton = close;
 
-		var status = new TableLayoutPanel { ColumnCount = 1, RowCount = 2, Dock = DockStyle.Fill, Height = 60 };
-		status.RowStyles.Add(new RowStyle(SizeType.Absolute, 36));
-		status.RowStyles.Add(new RowStyle(SizeType.Absolute, 22));
+		var status = new TableLayoutPanel { ColumnCount = 1, RowCount = 2, Dock = DockStyle.Fill, AutoSize = true };
+		status.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+		status.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 		status.Controls.Add(summary, 0, 0);
 		status.Controls.Add(blockers, 0, 1);
 
@@ -90,7 +90,7 @@ public sealed class ReviewForm : Form
 		content.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 		content.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 		content.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-		content.RowStyles.Add(new RowStyle(SizeType.Absolute, 60));
+		content.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 		content.Controls.Add(questionPanel, 0, 0);
 		content.Controls.Add(filters, 0, 1);
 		content.Controls.Add(grid, 0, 2);

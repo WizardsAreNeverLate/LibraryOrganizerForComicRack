@@ -94,7 +94,12 @@ internal static class Ui
 	public static GroupBox Section(string title, Control body)
 	{
 		var box = new GroupBox { Text = title, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, Dock = DockStyle.Top, Padding = new Padding(10, 6, 10, 8), Margin = new Padding(0, 0, 0, 8) };
-		body.Dock = DockStyle.Top;
+		// A docked child makes an auto-sized GroupBox leave out its padding, which cuts off the bottom of the body.
+		// Anchored at the display rectangle, the body counts in full.
+		body.Dock = DockStyle.None;
+		body.Location = box.DisplayRectangle.Location;
+		body.Width = box.DisplayRectangle.Width;
+		body.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 		box.Controls.Add(body);
 		return box;
 	}

@@ -36,6 +36,8 @@ public class DialogLayoutTests
 			return new ConfigForm(settings with { Profiles = [withRule] });
 		},
 		["ConfigForm Rules tab"] = () => Factories!["ConfigForm"](),
+		["ConfigForm Templates tab"] = () => Factories!["ConfigForm"](),
+		["ConfigForm Options tab"] = () => Factories!["ConfigForm"](),
 		["ReviewForm"] = () =>
 		{
 			Plan plan = Organizer.Plan(new OrganizeInput([], [], SeriesIndex.Empty, new WindowsFileSystem(), new Dictionary<AbsPath, BookId>()), Decisions.None);
@@ -71,6 +73,27 @@ public class DialogLayoutTests
 
 		await Assert.That(clipped).IsEmpty();
 	}
+
+	[Test]
+	[MethodDataSource(nameof(Dialogs))]
+	public async Task No_control_is_cut_off_by_its_container(string dialog, float fontPoints)
+	{
+		string[] cut = [];
+		var thread = new Thread(() =>
+		{
+			using Form form = Show(dialog, fontPoints);
+			cut = [.. Controls(form)
+				.Where(c => c.Visible && c.Parent is { } parent && !(parent is ScrollableControl { AutoScroll: true }) && c.Bottom > parent.ClientSize.Height + 1)
+				.Select(c => $"{c.GetType().Name} '{Name(c)}' bottom {c.Bottom} in {c.Parent!.GetType().Name} '{Name(c.Parent)}' of {c.Parent.ClientSize.Height}")];
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
+
+		await Assert.That(cut).IsEmpty();
+	}
+
+	private static string Name(Control c) => c.Text.Length > 0 ? c.Text.Split('\n')[0].Trim() : c.Controls.Count > 0 ? Name(c.Controls[0]) : "";
 
 	[Test]
 	[MethodDataSource(nameof(Dialogs))]
@@ -138,9 +161,9 @@ public class DialogLayoutTests
 		form.ShowInTaskbar = false;
 		form.Show();
 		Application.DoEvents();
-		if (dialog == "ConfigForm Rules tab")
+		if (dialog.StartsWith("ConfigForm ") && form is ConfigForm config)
 		{
-			((ConfigForm)form).ShowTab(ConfigTab.Rules);
+			config.ShowTab((ConfigTab)Enum.Parse(typeof(ConfigTab), dialog.Split(' ')[1]));
 			Application.DoEvents();
 		}
 		return form;

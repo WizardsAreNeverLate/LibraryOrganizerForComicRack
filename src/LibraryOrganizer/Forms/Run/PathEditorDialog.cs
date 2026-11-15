@@ -25,20 +25,22 @@ internal sealed class PathEditorDialog : Form
 		MaximizeBox = false;
 		ShowInTaskbar = false;
 		ClientSize = new Size(600, 190);
+		AutoSize = true;
+		AutoSizeMode = AutoSizeMode.GrowOnly;
 
 		var cancel = new Button { Text = "Cancel", AutoSize = true, MinimumSize = new Size(90, 0), DialogResult = DialogResult.Cancel, UseVisualStyleBackColor = true };
 		ok.Click += (_, _) => DialogResult = DialogResult.OK;
-		var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft };
+		var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, AutoSize = true };
 		buttons.Controls.AddRange([cancel, ok]);
 		AcceptButton = ok;
 		CancelButton = cancel;
 
-		var table = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 5, Padding = new Padding(12) };
+		var table = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 5, Padding = new Padding(12), AutoSize = true };
 		for (int i = 0; i < 4; i++)
 		{
 			table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 		}
-		table.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+		table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 		var intro = Ui.Label(reason);
 		intro.MaximumSize = new Size(560, 0);
 		table.Controls.Add(intro, 0, 0);

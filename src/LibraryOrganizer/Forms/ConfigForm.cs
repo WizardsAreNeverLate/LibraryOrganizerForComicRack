@@ -49,7 +49,7 @@ public sealed class ConfigForm : Form
 		StartPosition = FormStartPosition.CenterParent;
 		MinimizeBox = false;
 		ShowInTaskbar = false;
-		ClientSize = new Size(1040, 720);
+		ClientSize = new Size(1040, 864);
 		MinimumSize = new Size(900, 620);
 
 		duplicate = Ui.Button("Duplicate...", (_, _) => DuplicateProfile());

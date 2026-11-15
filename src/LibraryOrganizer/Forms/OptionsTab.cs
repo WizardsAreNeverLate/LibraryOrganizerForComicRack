@@ -14,7 +14,7 @@ internal sealed class OptionsTab : ProfileEditor
 	private readonly CheckBox dontAskOneValue = new() { Text = "Use a several-value field's only value without asking", AutoSize = true };
 	private readonly TextBox emptyFolder = new() { Dock = DockStyle.Fill, Margin = new Padding(0, 2, 0, 2) };
 	private readonly DataGridView substitutes = Grid();
-	private readonly CheckedListBox required = new() { CheckOnClick = true, IntegralHeight = false, Height = 170 };
+	private readonly CheckedListBox required = new() { CheckOnClick = true, IntegralHeight = false, Height = 204 };
 	private readonly TextBox[] months = [.. Enumerable.Range(0, 16).Select(_ => new TextBox { Dock = DockStyle.Fill, MinimumSize = new Size(70, 0), Margin = new Padding(0, 1, 8, 1) })];
 	private readonly DataGridView illegal = Grid();
 	private readonly CheckBox prune = new() { Text = "Remove folders left empty after organizing", AutoSize = true };
@@ -39,7 +39,8 @@ internal sealed class OptionsTab : ProfileEditor
 		var cleaning = Ui.Column();
 		cleaning.AddRow(collapseSpaces);
 		cleaning.AddRow(dontAskOneValue);
-		var emptyRow = new TableLayoutPanel { ColumnCount = 2, Height = 28 };
+		var emptyRow = new TableLayoutPanel { ColumnCount = 2, AutoSize = true };
+		emptyRow.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 		emptyRow.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
 		emptyRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 		emptyRow.Controls.Add(Ui.Label("Name for a folder level that comes out empty"), 0, 0);
@@ -202,7 +203,7 @@ internal sealed class OptionsTab : ProfileEditor
 		};
 	}
 
-	private static DataGridView Grid() => new()
+	private static DataGridView Grid() => new DataGridView
 	{
 		Dock = DockStyle.Top,
 		AllowUserToResizeRows = false,
@@ -213,7 +214,7 @@ internal sealed class OptionsTab : ProfileEditor
 		BorderStyle = BorderStyle.FixedSingle,
 		EditMode = DataGridViewEditMode.EditOnEnter,
 		MultiSelect = true,
-	};
+	}.FitsFont();
 
 	private static void RemoveSelected(DataGridView grid)
 	{
