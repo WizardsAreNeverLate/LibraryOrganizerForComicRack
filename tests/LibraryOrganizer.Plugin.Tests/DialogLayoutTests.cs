@@ -149,6 +149,29 @@ public class DialogLayoutTests
 		await Assert.That(truncated).IsEmpty();
 	}
 
+	[Test]
+	[Arguments(1100)]
+	[Arguments(1600)]
+	public async Task Month_name_boxes_keep_one_width_as_the_dialog_widens(int dialogWidth)
+	{
+		string[] widths = [];
+		var thread = new Thread(() =>
+		{
+			using Form form = Show("ConfigForm Options tab", 9f);
+			form.Width = dialogWidth;
+			Application.DoEvents();
+			widths = [.. Controls(form).OfType<TextBox>()
+				.Where(t => t.Parent!.Controls.OfType<TextBox>().Count() == 16)
+				.Select(t => $"{t.Text} {t.Width}px")];
+		});
+		thread.SetApartmentState(ApartmentState.STA);
+		thread.Start();
+		thread.Join();
+
+		await Assert.That(widths).Count().IsEqualTo(16);
+		await Assert.That(widths.Select(w => w.Split(' ').Last()).Distinct()).Count().IsEqualTo(1).Because(string.Join(", ", widths));
+	}
+
 	private static Form Show(string dialog, float fontPoints)
 	{
 		Form form = Factories[dialog]();

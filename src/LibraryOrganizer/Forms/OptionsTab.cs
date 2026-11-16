@@ -58,12 +58,14 @@ internal sealed class OptionsTab : ProfileEditor
 		requiredBody.AddRow(Ui.Hint("A book with any of these fields empty is not organized. It goes to the failed books folder, or is skipped."));
 		requiredBody.AddRow(required);
 
-		var monthGrid = new TableLayoutPanel { ColumnCount = 6, AutoSize = true };
+		var monthGrid = new TableLayoutPanel { ColumnCount = 7, AutoSize = true };
 		for (int pair = 0; pair < 3; pair++)
 		{
 			monthGrid.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
 			monthGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 104));
 		}
+		// An empty column takes the spare width; without one the table gives it all to the last month column.
+		monthGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
 		for (int i = 0; i < 16; i++)
 		{
 			int column = (i / 6) * 2;
