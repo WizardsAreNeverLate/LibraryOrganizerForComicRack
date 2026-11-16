@@ -139,6 +139,19 @@ public sealed class ConfigForm : Form
 		return (owner is null ? form.ShowDialog() : form.ShowDialog(owner)) == DialogResult.OK ? form.Edited : null;
 	}
 
+	// Paints the dialog in one buffered pass. Otherwise every transparent container repaints the themed tab background
+	// on each resize step, which made dragging the dialog edge take 100 to 800 ms per step.
+	protected override CreateParams CreateParams
+	{
+		get
+		{
+			const int WsExComposited = 0x02000000;
+			CreateParams parameters = base.CreateParams;
+			parameters.ExStyle |= WsExComposited;
+			return parameters;
+		}
+	}
+
 	protected override void OnLoad(EventArgs e)
 	{
 		base.OnLoad(e);
